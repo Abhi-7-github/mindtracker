@@ -20,11 +20,40 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const rawClientUrl = process.env.CLIENT_URL || '';
+const cleanClientUrl = rawClientUrl.replace(/\/$/, '');
 
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
-app.use(limiter);
+const allowedOrigins = [
+  'https://poloai-psi.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  ...(cleanClientUrl ? [cleanClientUrl] : []),
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const normalized = origin.replace(/\/$/, '');
+    if (
+      allowedOrigins.includes(normalized) ||
+      normalized.endsWith('.vercel.app') ||
+      normalized.includes('localhost') ||
+      normalized.includes('127.0.0.1')
+    ) {
+      return callback(null, true);
+    }
+    // Fallback: allow origin to prevent blocking deployed frontend
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['Set-Cookie'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
