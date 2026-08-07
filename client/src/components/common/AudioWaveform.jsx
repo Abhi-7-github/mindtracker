@@ -10,7 +10,7 @@ export const AudioWaveform = ({ isRecording, className }) => {
         <span
           key={i}
           className={cn(
-            "w-2 bg-[#B82126] rounded-full transition-all duration-150 polo-border border-black",
+            "w-2 bg-[#9F1239] rounded-full transition-all duration-150 polo-border border-black",
             isRecording ? "animate-wave-bar" : "h-4 opacity-40"
           )}
           style={{

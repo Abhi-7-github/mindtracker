@@ -58,10 +58,12 @@ export async function getMyAppointments(req, res, next) {
     if (req.user.role === 'psychologist') {
       appointments = await Appointment.find({ psychologist: req.user.id })
         .populate('user', 'name email avatar bio')
+        .populate('psychologist', 'name email title avatar visitingAddress specialties experience')
         .sort({ createdAt: -1 });
     } else {
       appointments = await Appointment.find({ user: req.user.id })
         .populate('psychologist', 'name email title avatar visitingAddress specialties experience')
+        .populate('user', 'name email avatar bio')
         .sort({ createdAt: -1 });
     }
 
@@ -70,6 +72,7 @@ export async function getMyAppointments(req, res, next) {
     next(err);
   }
 }
+
 
 export async function updateAppointmentStatus(req, res, next) {
   try {

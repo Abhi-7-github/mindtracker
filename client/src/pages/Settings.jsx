@@ -42,7 +42,7 @@ export const Settings = () => {
 
         <Card className="space-y-4">
           <div className="flex items-center space-x-3 pb-3 border-b-2 border-neutral-200">
-            <KeyRound className="w-5 h-5 text-[#B82126]" />
+            <KeyRound className="w-5 h-5 text-[#9F1239]" />
             <h3 className="text-lg font-black uppercase text-black">Change Security Password</h3>
           </div>
 

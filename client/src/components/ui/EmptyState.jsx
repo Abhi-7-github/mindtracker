@@ -14,7 +14,7 @@ export const EmptyState = ({
   return (
     <div className={cn("flex flex-col items-center justify-center p-8 text-center bg-white rounded-2xl polo-border polo-shadow", className)}>
       <div className="p-4 bg-neutral-100 rounded-2xl polo-border mb-4">
-        <Icon className="w-8 h-8 text-[#B82126]" />
+        <Icon className="w-8 h-8 text-[#9F1239]" />
       </div>
       <h4 className="text-lg font-black uppercase text-black">{title}</h4>
       <p className="text-sm font-medium text-neutral-600 mt-1 max-w-sm">{description}</p>

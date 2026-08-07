@@ -38,7 +38,7 @@ export const Login = () => {
   };
 
   return (
-    <AuthLayout title="Sign In" subtitle="Access your MindBridge AI wellness account">
+    <AuthLayout title="Sign In" subtitle="Access your POLO AI wellness account">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           label="Email Address"
@@ -66,7 +66,7 @@ export const Login = () => {
       <div className="text-center pt-4 border-t-2 border-neutral-200">
         <p className="text-xs font-bold text-neutral-600">
           Don't have an account?{' '}
-          <Link to="/register" className="text-[#B82126] hover:underline font-black">
+          <Link to="/register" className="text-[#9F1239] hover:underline font-black">
             Register Here
           </Link>
         </p>

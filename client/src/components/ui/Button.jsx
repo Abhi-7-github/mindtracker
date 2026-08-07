@@ -18,7 +18,7 @@ export const Button = React.forwardRef(({
   const baseStyles = "inline-flex items-center justify-center font-bold tracking-wide uppercase transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none polo-btn-press";
 
   const variants = {
-    primary: "bg-[#B82126] text-white hover:bg-[#8A181C] polo-border polo-shadow",
+    primary: "bg-[#9F1239] text-white hover:bg-[#8A181C] polo-border polo-shadow",
     secondary: "bg-black text-white hover:bg-neutral-800 polo-border polo-shadow-red",
     outline: "bg-white text-black hover:bg-neutral-100 polo-border polo-shadow",
     ghost: "bg-transparent text-black hover:bg-neutral-200 border-2 border-transparent",

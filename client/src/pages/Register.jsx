@@ -45,7 +45,7 @@ export const Register = () => {
   };
 
   return (
-    <AuthLayout title="Register Account" subtitle="Join MindBridge AI to track your mental wellness">
+    <AuthLayout title="Register Account" subtitle="Join POLO AI to track your mental wellness">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           label="Full Name"
@@ -83,11 +83,10 @@ export const Register = () => {
             <button
               type="button"
               onClick={() => setValue('role', 'user')}
-              className={`p-2.5 rounded-xl text-xs font-black uppercase border-2 flex items-center justify-center space-x-2 transition-all ${
-                selectedRole === 'user'
-                  ? 'bg-[#B82126] text-white border-black polo-shadow-sm'
-                  : 'bg-white text-black border-neutral-300'
-              }`}
+              className={`p-2.5 rounded-xl text-xs font-black uppercase border-2 flex items-center justify-center space-x-2 transition-all ${selectedRole === 'user'
+                ? 'bg-[#9F1239] text-white border-black polo-shadow-sm'
+                : 'bg-white text-black border-neutral-300'
+                }`}
             >
               <User className="w-4 h-4" />
               <span>User</span>
@@ -95,11 +94,10 @@ export const Register = () => {
             <button
               type="button"
               onClick={() => setValue('role', 'psychologist')}
-              className={`p-2.5 rounded-xl text-xs font-black uppercase border-2 flex items-center justify-center space-x-2 transition-all ${
-                selectedRole === 'psychologist'
-                  ? 'bg-[#B82126] text-white border-black polo-shadow-sm'
-                  : 'bg-white text-black border-neutral-300'
-              }`}
+              className={`p-2.5 rounded-xl text-xs font-black uppercase border-2 flex items-center justify-center space-x-2 transition-all ${selectedRole === 'psychologist'
+                ? 'bg-[#9F1239] text-white border-black polo-shadow-sm'
+                : 'bg-white text-black border-neutral-300'
+                }`}
             >
               <UserCheck className="w-4 h-4" />
               <span>Psychologist</span>
@@ -115,7 +113,7 @@ export const Register = () => {
       <div className="text-center pt-4 border-t-2 border-neutral-200">
         <p className="text-xs font-bold text-neutral-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-[#B82126] hover:underline font-black">
+          <Link to="/login" className="text-[#9F1239] hover:underline font-black">
             Sign In Here
           </Link>
         </p>

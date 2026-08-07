@@ -110,11 +110,10 @@ export const Psychologists = () => {
             <button
               key={spec}
               onClick={() => setSelectedSpecialty(spec)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all ${
-                selectedSpecialty === spec
-                  ? 'bg-[#B82126] text-white polo-border polo-shadow-sm'
-                  : 'bg-white text-black polo-border hover:bg-neutral-100'
-              }`}
+              className={`px-3 py-1.5 rounded-xl text-xs font-black uppercase transition-all ${selectedSpecialty === spec
+                ? 'bg-[#9F1239] text-white polo-border polo-shadow-sm'
+                : 'bg-white text-black polo-border hover:bg-neutral-100'
+                }`}
             >
               {spec}
             </button>
@@ -141,12 +140,13 @@ export const Psychologists = () => {
                   ...doc,
                   id: doc._id || doc.id,
                   name: doc.name,
-                  title: doc.title || 'Licensed Practitioner',
-                  rating: doc.rating || 4.9,
-                  reviews: doc.reviews || 42,
+                  title: doc.title,
+                  rating: doc.rating,
+                  reviews: doc.reviews,
                   available: true,
-                  experience: doc.experience || 'Verified Doctor',
-                  specialties: doc.specialties?.length ? doc.specialties : ['Clinical Therapy'],
+                  experience: doc.experience,
+                  specialties: doc.specialties,
+                  avatar: doc.avatar,
                 }}
                 onBook={(doctor) => {
                   setSelectedDoctor(doctor);
@@ -167,7 +167,7 @@ export const Psychologists = () => {
         >
           <div className="space-y-4">
             <div className="p-4 bg-neutral-100 rounded-xl border border-neutral-300 flex items-center space-x-3">
-              <div className="p-2.5 bg-[#B82126] text-white rounded-xl polo-border">
+              <div className="p-2.5 bg-[#9F1239] text-white rounded-xl polo-border">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
@@ -175,7 +175,7 @@ export const Psychologists = () => {
                 <p className="text-[11px] text-neutral-600">{selectedDoctor?.title || 'Clinical Specialist'}</p>
                 {selectedDoctor?.visitingAddress && (
                   <p className="text-[10px] font-bold text-neutral-500 flex items-center mt-0.5">
-                    <MapPin className="w-3 h-3 mr-1 text-[#B82126]" />
+                    <MapPin className="w-3 h-3 mr-1 text-[#9F1239]" />
                     {selectedDoctor.visitingAddress}
                   </p>
                 )}
@@ -209,11 +209,10 @@ export const Psychologists = () => {
                           setBookingTime(slotLabel);
                           if (slot.mode) setBookingMode(slot.mode.includes('Clinic') ? 'In-Person Clinic' : 'Online Video');
                         }}
-                        className={`p-2.5 rounded-xl text-xs font-bold border-2 transition-all text-left ${
-                          bookingTime === slotLabel
-                            ? 'bg-[#B82126] text-white border-black polo-shadow-sm'
-                            : 'bg-white text-black border-neutral-300 hover:border-black'
-                        }`}
+                        className={`p-2.5 rounded-xl text-xs font-bold border-2 transition-all text-left ${bookingTime === slotLabel
+                          ? 'bg-[#9F1239] text-white border-black polo-shadow-sm'
+                          : 'bg-white text-black border-neutral-300 hover:border-black'
+                          }`}
                       >
                         <div className="font-black">{slot.dayOrDate}</div>
                         <div className="text-[11px] font-bold">{slotLabel}</div>
@@ -228,11 +227,10 @@ export const Psychologists = () => {
                       key={slot}
                       type="button"
                       onClick={() => setBookingTime(slot)}
-                      className={`p-2 rounded-xl text-xs font-bold border-2 transition-all ${
-                        bookingTime === slot
-                          ? 'bg-[#B82126] text-white border-black polo-shadow-sm'
-                          : 'bg-white text-black border-neutral-300'
-                      }`}
+                      className={`p-2 rounded-xl text-xs font-bold border-2 transition-all ${bookingTime === slot
+                        ? 'bg-[#9F1239] text-white border-black polo-shadow-sm'
+                        : 'bg-white text-black border-neutral-300'
+                        }`}
                     >
                       {slot}
                     </button>
@@ -250,25 +248,23 @@ export const Psychologists = () => {
                 <button
                   type="button"
                   onClick={() => setBookingMode('Online Video')}
-                  className={`p-3 rounded-xl text-xs font-extrabold flex items-center justify-center space-x-2 border-2 transition-all ${
-                    bookingMode === 'Online Video'
-                      ? 'bg-black text-white border-black polo-shadow-sm'
-                      : 'bg-white text-black border-neutral-300'
-                  }`}
+                  className={`p-3 rounded-xl text-xs font-extrabold flex items-center justify-center space-x-2 border-2 transition-all ${bookingMode === 'Online Video'
+                    ? 'bg-black text-white border-black polo-shadow-sm'
+                    : 'bg-white text-black border-neutral-300'
+                    }`}
                 >
-                  <Video className="w-4 h-4 text-[#B82126]" />
+                  <Video className="w-4 h-4 text-[#9F1239]" />
                   <span>Online Video</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setBookingMode('In-Person Clinic')}
-                  className={`p-3 rounded-xl text-xs font-extrabold flex items-center justify-center space-x-2 border-2 transition-all ${
-                    bookingMode === 'In-Person Clinic'
-                      ? 'bg-black text-white border-black polo-shadow-sm'
-                      : 'bg-white text-black border-neutral-300'
-                  }`}
+                  className={`p-3 rounded-xl text-xs font-extrabold flex items-center justify-center space-x-2 border-2 transition-all ${bookingMode === 'In-Person Clinic'
+                    ? 'bg-black text-white border-black polo-shadow-sm'
+                    : 'bg-white text-black border-neutral-300'
+                    }`}
                 >
-                  <MapPin className="w-4 h-4 text-[#B82126]" />
+                  <MapPin className="w-4 h-4 text-[#9F1239]" />
                   <span>In-Person Clinic</span>
                 </button>
               </div>

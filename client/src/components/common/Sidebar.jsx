@@ -36,18 +36,25 @@ export const Sidebar = ({ isOpen, onClose }) => {
     navigate('/login');
   };
 
+  // Filter links for psychologist role (remove Journal and Voice Check-in)
+  const navLinksToDisplay = NAV_LINKS.filter((link) => {
+    if (user?.role === 'psychologist') {
+      return link.path !== '/voice-checkin' && link.path !== '/journal';
+    }
+    return true;
+  });
+
   return (
     <aside
-      className={`fixed md:sticky top-[61px] left-0 z-30 w-64 h-[calc(100vh-61px)] bg-white border-r-2 border-black p-4 flex flex-col justify-between transition-transform duration-200 ${
-        isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-      }`}
+      className={`fixed md:sticky top-[61px] left-0 z-30 w-64 h-[calc(100vh-61px)] bg-white border-r-2 border-black p-4 flex flex-col justify-between transition-transform duration-200 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
     >
       <div className="space-y-6">
         <div className="space-y-1">
           <p className="px-3 text-[10px] font-black uppercase text-neutral-400 tracking-wider">
             Menu Navigation
           </p>
-          {NAV_LINKS.map((link) => {
+          {navLinksToDisplay.map((link) => {
             const Icon = iconMap[link.icon] || LayoutDashboard;
             return (
               <NavLink
@@ -55,10 +62,9 @@ export const Sidebar = ({ isOpen, onClose }) => {
                 to={link.path}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center space-x-3 px-3 py-3 rounded-xl text-xs font-extrabold transition-all duration-150 ${
-                    isActive
-                      ? 'bg-[#B82126] text-white polo-border polo-shadow-sm'
-                      : 'text-black hover:bg-neutral-100 border-2 border-transparent'
+                  `flex items-center space-x-3 px-3 py-3 rounded-xl text-xs font-extrabold transition-all duration-150 ${isActive
+                    ? 'bg-[#9F1239] text-white polo-border polo-shadow-sm'
+                    : 'text-black hover:bg-neutral-100 border-2 border-transparent'
                   }`
                 }
               >
@@ -78,14 +84,13 @@ export const Sidebar = ({ isOpen, onClose }) => {
               to="/admin"
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center space-x-3 px-3 py-3 rounded-xl text-xs font-extrabold transition-all duration-150 ${
-                  isActive
-                    ? 'bg-black text-white polo-border polo-shadow-sm'
-                    : 'text-black hover:bg-neutral-100 border-2 border-transparent'
+                `flex items-center space-x-3 px-3 py-3 rounded-xl text-xs font-extrabold transition-all duration-150 ${isActive
+                  ? 'bg-black text-white polo-border polo-shadow-sm'
+                  : 'text-black hover:bg-neutral-100 border-2 border-transparent'
                 }`
               }
             >
-              <ShieldAlert className="w-4 h-4 text-[#B82126]" />
+              <ShieldAlert className="w-4 h-4 text-[#9F1239]" />
               <span>Admin Portal</span>
             </NavLink>
           </div>

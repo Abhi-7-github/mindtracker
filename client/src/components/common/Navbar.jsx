@@ -27,31 +27,33 @@ export const Navbar = ({ onToggleSidebar }) => {
           </button>
         )}
         <Link to="/dashboard" className="flex items-center space-x-2">
-          <div className="w-9 h-9 bg-[#B82126] rounded-xl polo-border flex items-center justify-center text-white font-black text-lg polo-shadow-sm">
-            M
+          <div className="w-9 h-9 bg-[#9F1239] rounded-xl polo-border flex items-center justify-center text-white font-black text-lg polo-shadow-sm">
+            P
           </div>
           <span className="text-xl font-black tracking-tight text-black uppercase">
-            MindBridge <span className="text-[#B82126]">AI</span>
+            POLO <span className="text-[#9F1239]">AI</span>
           </span>
         </Link>
       </div>
 
       <div className="flex items-center space-x-3">
-        <Button
-          icon={Mic}
-          size="sm"
-          onClick={() => navigate('/voice-checkin')}
-          className="hidden sm:inline-flex"
-        >
-          Voice Check-in
-        </Button>
+        {user?.role !== 'psychologist' && user?.role !== 'admin' && (
+          <Button
+            icon={Mic}
+            size="sm"
+            onClick={() => navigate('/voice-checkin')}
+            className="hidden sm:inline-flex"
+          >
+            Voice Check-in
+          </Button>
+        )}
 
         <Link
           to="/notifications"
           className="p-2.5 rounded-xl bg-white polo-border hover:bg-neutral-100 relative text-black"
         >
           <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#B82126]" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#9F1239]" />
         </Link>
 
         {/* User Dropdown */}
@@ -81,7 +83,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                 onClick={() => setShowDropdown(false)}
                 className="flex items-center space-x-2 px-3 py-2 text-xs font-bold text-black rounded-lg hover:bg-neutral-100"
               >
-                <User className="w-4 h-4 text-[#B82126]" />
+                <User className="w-4 h-4 text-[#9F1239]" />
                 <span>Profile</span>
               </Link>
 
@@ -90,7 +92,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                 onClick={() => setShowDropdown(false)}
                 className="flex items-center space-x-2 px-3 py-2 text-xs font-bold text-black rounded-lg hover:bg-neutral-100"
               >
-                <Settings className="w-4 h-4 text-[#B82126]" />
+                <Settings className="w-4 h-4 text-[#9F1239]" />
                 <span>Settings</span>
               </Link>
 
@@ -98,7 +100,7 @@ export const Navbar = ({ onToggleSidebar }) => {
                 <Link
                   to="/admin"
                   onClick={() => setShowDropdown(false)}
-                  className="flex items-center space-x-2 px-3 py-2 text-xs font-bold text-[#B82126] rounded-lg hover:bg-red-50"
+                  className="flex items-center space-x-2 px-3 py-2 text-xs font-bold text-[#9F1239] rounded-lg hover:bg-red-50"
                 >
                   <ShieldAlert className="w-4 h-4" />
                   <span>Admin Portal</span>

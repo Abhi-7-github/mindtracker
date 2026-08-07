@@ -7,3 +7,20 @@ export async function voiceCheckin(formData) {
     },
   });
 }
+
+export async function getLatestSession() {
+  return api.get('/api/ai/latest-session');
+}
+
+export async function getSessionById(sessionId) {
+  return api.get(`/api/ai/session/${sessionId}`);
+}
+
+export async function getJournals() {
+  return api.get('/api/ai/journals');
+}
+
+export async function createJournal(data) {
+  return api.post('/api/ai/journals', data);
+}
+

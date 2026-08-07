@@ -1,5 +1,5 @@
 export const POLO_THEME = {
-  primary: '#B82126',
+  primary: '#9F1239',
   primaryHover: '#8A181C',
   black: '#000000',
   white: '#FFFFFF',

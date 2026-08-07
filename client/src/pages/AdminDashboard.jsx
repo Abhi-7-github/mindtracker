@@ -86,7 +86,7 @@ export const AdminDashboard = () => {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-black text-white text-[10px] font-black uppercase tracking-wider mb-2">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#B82126]" />
+              <ShieldCheck className="w-3.5 h-3.5 text-[#9F1239]" />
               <span>Admin Verification Portal</span>
             </div>
             <h1 className="text-3xl font-black uppercase text-black">Psychologist Verification</h1>
@@ -104,9 +104,8 @@ export const AdminDashboard = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card
             onClick={() => setFilter('All')}
-            className={`cursor-pointer transition-all ${
-              filter === 'All' ? 'ring-2 ring-black bg-neutral-100' : ''
-            }`}
+            className={`cursor-pointer transition-all ${filter === 'All' ? 'ring-2 ring-black bg-neutral-100' : ''
+              }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -121,9 +120,8 @@ export const AdminDashboard = () => {
 
           <Card
             onClick={() => setFilter('Pending')}
-            className={`cursor-pointer transition-all ${
-              filter === 'Pending' ? 'ring-2 ring-amber-500 bg-amber-50/50' : ''
-            }`}
+            className={`cursor-pointer transition-all ${filter === 'Pending' ? 'ring-2 ring-amber-500 bg-amber-50/50' : ''
+              }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -138,9 +136,8 @@ export const AdminDashboard = () => {
 
           <Card
             onClick={() => setFilter('Verified')}
-            className={`cursor-pointer transition-all ${
-              filter === 'Verified' ? 'ring-2 ring-emerald-500 bg-emerald-50/50' : ''
-            }`}
+            className={`cursor-pointer transition-all ${filter === 'Verified' ? 'ring-2 ring-emerald-500 bg-emerald-50/50' : ''
+              }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -155,9 +152,8 @@ export const AdminDashboard = () => {
 
           <Card
             onClick={() => setFilter('Rejected')}
-            className={`cursor-pointer transition-all ${
-              filter === 'Rejected' ? 'ring-2 ring-red-500 bg-red-50/50' : ''
-            }`}
+            className={`cursor-pointer transition-all ${filter === 'Rejected' ? 'ring-2 ring-red-500 bg-red-50/50' : ''
+              }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -182,11 +178,10 @@ export const AdminDashboard = () => {
                 <button
                   key={statusOption}
                   onClick={() => setFilter(statusOption)}
-                  className={`px-3 py-1 text-xs font-black uppercase rounded-lg border-2 transition-all ${
-                    filter === statusOption
-                      ? 'bg-[#B82126] text-white border-black polo-shadow-sm'
-                      : 'bg-white text-black border-neutral-300 hover:border-black'
-                  }`}
+                  className={`px-3 py-1 text-xs font-black uppercase rounded-lg border-2 transition-all ${filter === statusOption
+                    ? 'bg-[#9F1239] text-white border-black polo-shadow-sm'
+                    : 'bg-white text-black border-neutral-300 hover:border-black'
+                    }`}
                 >
                   {statusOption}
                 </button>
@@ -233,20 +228,19 @@ export const AdminDashboard = () => {
                           <div className="flex items-center space-x-2 flex-wrap">
                             <h4 className="text-base font-black text-black">{psych.name}</h4>
                             <span
-                              className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${
-                                status === 'Verified'
-                                  ? 'bg-emerald-100 text-emerald-800 border-emerald-400'
-                                  : status === 'Rejected'
+                              className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${status === 'Verified'
+                                ? 'bg-emerald-100 text-emerald-800 border-emerald-400'
+                                : status === 'Rejected'
                                   ? 'bg-red-100 text-red-800 border-red-400'
                                   : 'bg-amber-100 text-amber-800 border-amber-400'
-                              }`}
+                                }`}
                             >
                               {status}
                             </span>
                           </div>
                           <p className="text-xs font-bold text-neutral-600">{psych.email}</p>
                           {psych.title && (
-                            <div className="flex items-center space-x-1.5 text-xs font-extrabold text-[#B82126] mt-1">
+                            <div className="flex items-center space-x-1.5 text-xs font-extrabold text-[#9F1239] mt-1">
                               <Briefcase className="w-3.5 h-3.5" />
                               <span>{psych.title}</span>
                             </div>
@@ -366,7 +360,7 @@ export const AdminDashboard = () => {
                                       {slot.mode}
                                     </span>
                                   </div>
-                                  <p className="text-xs font-extrabold text-[#B82126]">
+                                  <p className="text-xs font-extrabold text-[#9F1239]">
                                     {slot.startTime} - {slot.endTime}
                                   </p>
                                   <p className="text-[10px] font-bold text-neutral-500">

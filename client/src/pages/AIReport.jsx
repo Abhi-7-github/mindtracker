@@ -1,43 +1,70 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { ScoreGauge } from '../components/charts/ScoreGauge';
 import { EmotionMeter } from '../components/charts/EmotionMeter';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import * as aiService from '../services/aiService';
 import { Sparkles, FileText, CheckCircle2, AlertTriangle, UserCheck, ArrowLeft, ShieldAlert } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const AIReport = () => {
   const { sessionId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const reportData = location.state?.report || {
-    sessionId: sessionId || 'demo-session',
-    transcript: "I've been feeling quite stressed with work deadlines lately and struggling to maintain a good sleep schedule...",
-    analysis: {
-      primaryEmotion: 'Anxious',
-      secondaryEmotion: 'Exhausted',
-      stressScore: 72,
-      anxietyScore: 65,
-      burnoutScore: 58,
-      wellnessScore: 48,
-      dailyJournal: 'Work pressures are taking a toll on rest and energy levels. Setting clearer boundary hours will help restore balance.',
-      wellnessSummary: 'High stress level detected due to workload. Daily relaxation exercises recommended.',
-      wellnessPlan: {
-        recommendations: [
-          'Practice 10-minute mindfulness breathing before sleep',
-          'Set a hard cutoff for work communications at 7:00 PM',
-          'Schedule a 30-minute outdoor walk during lunch hours',
-        ],
-      },
-      psychologistRecommendation: 'A consultation with a specialist in stress management is suggested.',
-      crisisDetection: false,
-      disclaimer: 'This assessment is AI-generated and should not be considered medical advice.',
-    },
+  const [reportData, setReportData] = useState(location.state?.report || null);
+  const [loading, setLoading] = useState(!location.state?.report);
+
+  useEffect(() => {
+    if (!reportData && sessionId) {
+      fetchReport();
+    }
+  }, [sessionId]);
+
+  const fetchReport = async () => {
+    setLoading(true);
+    try {
+      const res = await aiService.getSessionById(sessionId);
+      if (res.success && res.data) {
+        setReportData(res.data);
+      }
+    } catch (err) {
+      toast.error('Failed to load AI report');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const { transcript, analysis } = reportData;
+  const transcript = reportData?.transcript || '';
+  const analysis = reportData?.analysis || null;
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="py-24 text-center space-y-3">
+          <p className="text-sm font-black uppercase text-neutral-600">Loading AI assessment report...</p>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!reportData) {
+    return (
+      <DashboardLayout>
+        <div className="py-24 text-center space-y-4 max-w-md mx-auto">
+          <h2 className="text-xl font-black uppercase text-black">Report Not Found</h2>
+          <p className="text-xs text-neutral-500 font-medium">
+            Could not find an AI assessment report for this session. Complete a voice check-in to generate a report.
+          </p>
+          <Button icon={ArrowLeft} onClick={() => navigate('/dashboard')}>
+            Back to Dashboard
+          </Button>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -47,7 +74,7 @@ export const AIReport = () => {
           <Button variant="ghost" size="sm" icon={ArrowLeft} onClick={() => navigate('/dashboard')}>
             Back to Dashboard
           </Button>
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-100 text-[#B82126] border-2 border-[#B82126] text-xs font-black uppercase">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-100 text-[#9F1239] border-2 border-[#9F1239] text-xs font-black uppercase">
             <Sparkles className="w-3.5 h-3.5" />
             <span>AI Assessment Report</span>
           </div>
@@ -85,7 +112,7 @@ export const AIReport = () => {
 
           <Card className="md:col-span-2 space-y-3">
             <div className="flex items-center space-x-2">
-              <FileText className="w-4 h-4 text-[#B82126]" />
+              <FileText className="w-4 h-4 text-[#9F1239]" />
               <h4 className="text-sm font-black uppercase text-black">Voice Transcript</h4>
             </div>
             <p className="text-xs font-medium text-neutral-700 leading-relaxed italic bg-neutral-100 p-4 rounded-xl border border-neutral-300">
@@ -127,7 +154,7 @@ export const AIReport = () => {
         {/* Psychologist Recommendation Card */}
         <Card className="flex flex-col md:flex-row items-center justify-between gap-4 bg-black text-white polo-border-dark">
           <div className="flex items-center space-x-4">
-            <div className="p-3 bg-[#B82126] rounded-xl text-white polo-border">
+            <div className="p-3 bg-[#9F1239] rounded-xl text-white polo-border">
               <UserCheck className="w-6 h-6" />
             </div>
             <div>

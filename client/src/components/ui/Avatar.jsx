@@ -23,7 +23,7 @@ export const Avatar = ({ src, name = 'User', size = 'md', className, status }) =
     <div className="relative inline-block">
       <div
         className={cn(
-          "rounded-full overflow-hidden flex items-center justify-center font-black bg-[#B82126] text-white polo-border flex-shrink-0",
+          "rounded-full overflow-hidden flex items-center justify-center font-black bg-[#9F1239] text-white polo-border flex-shrink-0",
           sizes[size],
           className
         )}

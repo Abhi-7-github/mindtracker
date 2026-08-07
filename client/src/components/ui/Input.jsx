@@ -27,7 +27,7 @@ export const Input = React.forwardRef(({
           ref={ref}
           type={type}
           className={cn(
-            "w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium placeholder:text-neutral-400 focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#B82126]",
+            "w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium placeholder:text-neutral-400 focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#9F1239]",
             Icon && "pl-10",
             error && "border-red-600 focus:shadow-[4px_4px_0px_0px_#DC2626]",
             className

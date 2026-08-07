@@ -25,11 +25,11 @@ export const Landing = () => {
       {/* Header */}
       <header className="px-6 py-5 flex items-center justify-between max-w-7xl mx-auto w-full">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-[#B82126] rounded-xl polo-border flex items-center justify-center text-white font-black text-xl polo-shadow-sm">
-            M
+          <div className="w-10 h-10 bg-[#9F1239] rounded-xl polo-border flex items-center justify-center text-white font-black text-xl polo-shadow-sm">
+            P
           </div>
           <span className="text-2xl font-black tracking-tight text-black uppercase">
-            MindBridge <span className="text-[#B82126]">AI</span>
+            POLO <span className="text-[#9F1239]">AI</span>
           </span>
         </div>
         <div className="flex items-center space-x-3">
@@ -45,14 +45,9 @@ export const Landing = () => {
       {/* Hero Section */}
       <section className="px-6 py-16 max-w-7xl mx-auto w-full">
         <div ref={heroRef} className="text-center max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-red-100 text-[#B82126] border-2 border-[#B82126] text-xs font-black uppercase tracking-wider">
-            <Sparkles className="w-4 h-4" />
-            <span>AI-Powered Mental Health & WebRTC Platform</span>
-          </div>
-
           <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-black leading-none">
             Speak Your Mind. <br />
-            <span className="text-[#B82126] underline decoration-black decoration-4">Understand Your Emotion.</span>
+            <span className="text-[#9F1239] underline decoration-black decoration-4">Understand Your Emotion.</span>
           </h1>
 
           <p className="text-base md:text-lg font-bold text-neutral-700 max-w-2xl mx-auto leading-relaxed">
@@ -80,7 +75,7 @@ export const Landing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <Card className="hover:translate-y-[-4px]">
-              <div className="p-3 bg-[#B82126] text-white rounded-xl polo-border w-fit mb-4">
+              <div className="p-3 bg-[#9F1239] text-white rounded-xl polo-border w-fit mb-4">
                 <Mic className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-black uppercase text-black mb-2">AI Voice Check-in</h3>
@@ -100,7 +95,7 @@ export const Landing = () => {
             </Card>
 
             <Card className="hover:translate-y-[-4px]">
-              <div className="p-3 bg-[#B82126] text-white rounded-xl polo-border w-fit mb-4">
+              <div className="p-3 bg-[#9F1239] text-white rounded-xl polo-border w-fit mb-4">
                 <Video className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-black uppercase text-black mb-2">WebRTC Video Calls</h3>

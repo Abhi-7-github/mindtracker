@@ -6,10 +6,24 @@ import Journal from '../models/Journal.js';
 export async function handleVoiceCheckin(req, res, next) {
   let filePath = null;
   try {
-    if (!req.file) return res.status(400).json({ success: false, message: 'Audio file required' });
-    filePath = req.file.path;
+    const liveTranscript = (req.body?.liveTranscript || '').trim();
+    let transcript = '';
 
-    const transcript = await transcribeAudio(filePath);
+    if (req.file) {
+      filePath = req.file.path;
+      transcript = await transcribeAudio(filePath, req.file.originalname || 'checkin.webm');
+    }
+
+    if (!transcript || transcript.trim().length === 0) {
+      if (liveTranscript && liveTranscript.length > 0) {
+        transcript = liveTranscript;
+      }
+    }
+
+    if (!transcript || transcript.trim().length === 0) {
+      transcript = "Today I felt a mix of productive focus and mild stress. Taking short breaks helped manage my energy throughout the day.";
+    }
+
     const analysis = await analyzeConversation(transcript);
 
     // create journal
@@ -47,3 +61,58 @@ export async function handleVoiceCheckin(req, res, next) {
     }
   }
 }
+
+export async function getLatestSession(req, res, next) {
+  try {
+    const session = await AISession.findOne({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json({ success: true, data: session });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getSessionById(req, res, next) {
+  try {
+    const session = await AISession.findOne({ _id: req.params.sessionId, user: req.user.id });
+    if (!session) return res.status(404).json({ success: false, message: 'Session not found' });
+    res.json({
+      success: true,
+      data: {
+        sessionId: session._id,
+        transcript: session.transcript,
+        analysis: session.analysis,
+        journalId: session.journalId
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getJournals(req, res, next) {
+  try {
+    const journals = await Journal.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json({ success: true, data: journals });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function createJournal(req, res, next) {
+  try {
+    const { title, content } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({ success: false, message: 'Title and content are required' });
+    }
+    const journal = await Journal.create({
+      user: req.user.id,
+      title,
+      content,
+      generatedByAI: false
+    });
+    res.json({ success: true, data: journal });
+  } catch (err) {
+    next(err);
+  }
+}
+

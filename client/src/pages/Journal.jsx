@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -7,45 +7,56 @@ import { Input } from '../components/ui/Input';
 import { BookOpen, Plus, Sparkles, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import * as aiService from '../services/aiService';
 
 export const Journal = () => {
-  const [journals, setJournals] = useState([
-    {
-      id: 'j-1',
-      title: 'AI Journal — Voice Check-in',
-      content: 'Work pressures are taking a toll on rest and energy levels. Setting clearer boundary hours will help restore balance.',
-      generatedByAI: true,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: 'j-2',
-      title: 'Evening Reflection',
-      content: 'Spent 20 minutes doing outdoor walking today. Felt much lighter after breathing exercises.',
-      generatedByAI: false,
-      createdAt: new Date(Date.now() - 86400000).toISOString(),
-    },
-  ]);
-
+  const [journals, setJournals] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleCreateJournal = () => {
+  useEffect(() => {
+    fetchJournals();
+  }, []);
+
+  const fetchJournals = async () => {
+    setLoading(true);
+    try {
+      const res = await aiService.getJournals();
+      if (res.success && res.data) {
+        setJournals(res.data);
+      }
+    } catch (err) {
+      toast.error('Failed to load journals');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateJournal = async () => {
     if (!newTitle.trim() || !newContent.trim()) return toast.error('Please fill in title and content');
 
-    const entry = {
-      id: `j-${Date.now()}`,
-      title: newTitle,
-      content: newContent,
-      generatedByAI: false,
-      createdAt: new Date().toISOString(),
-    };
+    setSaving(true);
+    try {
+      const res = await aiService.createJournal({
+        title: newTitle,
+        content: newContent,
+      });
 
-    setJournals([entry, ...journals]);
-    toast.success('Journal entry saved');
-    setIsModalOpen(false);
-    setNewTitle('');
-    setNewContent('');
+      if (res.success && res.data) {
+        setJournals([res.data, ...journals]);
+        toast.success('Journal entry saved successfully');
+        setIsModalOpen(false);
+        setNewTitle('');
+        setNewContent('');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Failed to save journal entry');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -62,39 +73,53 @@ export const Journal = () => {
         </div>
 
         {/* Journals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {journals.map((j) => (
-            <Card key={j.id} className="space-y-3 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span
-                    className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                      j.generatedByAI
-                        ? 'bg-red-100 text-[#B82126] border-[#B82126]'
+        {loading ? (
+          <p className="text-xs font-bold text-neutral-500 py-12 text-center">Loading journal entries...</p>
+        ) : journals.length === 0 ? (
+          <div className="py-16 text-center border-2 border-dashed border-neutral-300 rounded-2xl bg-white space-y-3">
+            <BookOpen className="w-10 h-10 text-neutral-400 mx-auto" />
+            <h3 className="text-base font-black text-black uppercase">No Journal Entries Yet</h3>
+            <p className="text-xs text-neutral-500 max-w-sm mx-auto">
+              Complete a voice check-in to generate an AI journal summary, or create your first personal reflection.
+            </p>
+            <Button size="sm" icon={Plus} onClick={() => setIsModalOpen(true)}>
+              Write Personal Note
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {journals.map((j) => (
+              <Card key={j._id || j.id} className="space-y-3 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${j.generatedByAI
+                        ? 'bg-red-100 text-[#9F1239] border-[#9F1239]'
                         : 'bg-neutral-100 text-neutral-800 border-neutral-300'
-                    }`}
-                  >
-                    {j.generatedByAI ? (
-                      <span className="flex items-center">
-                        <Sparkles className="w-3 h-3 mr-1" /> AI Generated
-                      </span>
-                    ) : (
-                      'Personal Note'
-                    )}
-                  </span>
-                  <span className="text-[10px] font-semibold text-neutral-500 flex items-center">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {format(new Date(j.createdAt), 'MMM dd, yyyy')}
-                  </span>
+                        }`}
+                    >
+                      {j.generatedByAI ? (
+                        <span className="flex items-center">
+                          <Sparkles className="w-3 h-3 mr-1" /> AI Generated
+                        </span>
+                      ) : (
+                        'Personal Note'
+                      )}
+                    </span>
+                    <span className="text-[10px] font-semibold text-neutral-500 flex items-center">
+                      <Calendar className="w-3 h-3 mr-1" />
+                      {j.createdAt ? format(new Date(j.createdAt), 'MMM dd, yyyy') : 'Recent'}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-black text-black">{j.title}</h3>
+                  <p className="text-xs font-medium text-neutral-700 mt-2 leading-relaxed whitespace-pre-line">
+                    {j.content}
+                  </p>
                 </div>
-                <h3 className="text-lg font-black text-black">{j.title}</h3>
-                <p className="text-xs font-medium text-neutral-700 mt-2 leading-relaxed">
-                  {j.content}
-                </p>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* New Entry Modal */}
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="New Journal Entry">
@@ -110,13 +135,13 @@ export const Journal = () => {
                 Content
               </label>
               <textarea
-                className="w-full bg-white text-black p-3 text-sm rounded-xl polo-border focus:shadow-[4px_4px_0px_0px_#B82126] focus:outline-none min-h-[120px]"
+                className="w-full bg-white text-black p-3 text-sm rounded-xl polo-border focus:shadow-[4px_4px_0px_0px_#9F1239] focus:outline-none min-h-[120px]"
                 placeholder="Write your thoughts..."
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
               />
             </div>
-            <Button className="w-full" onClick={handleCreateJournal}>
+            <Button className="w-full" loading={saving} onClick={handleCreateJournal}>
               Save Entry
             </Button>
           </div>
@@ -125,3 +150,4 @@ export const Journal = () => {
     </DashboardLayout>
   );
 };
+

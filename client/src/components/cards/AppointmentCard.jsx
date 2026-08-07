@@ -5,7 +5,14 @@ import { Avatar } from '../ui/Avatar';
 import { Calendar, Clock, Video, MapPin } from 'lucide-react';
 
 export const AppointmentCard = ({ appointment, onJoin }) => {
-  const { psychologist, date, timeSlot, duration, mode, status, meetingId } = appointment;
+  const { psychologist, user, person, date, timeSlot, duration, mode, status, meetingId } = appointment;
+
+  const target = person || (psychologist && typeof psychologist === 'object' && psychologist.name ? psychologist : (user && typeof user === 'object' ? user : psychologist));
+
+  const displayName = target?.name || (typeof target === 'string' ? target : 'Therapy Consultation');
+  const displayTitle = target?.title || (Array.isArray(target?.specialties) && target.specialties.length > 0 ? target.specialties.join(', ') : '');
+  const avatar = target?.avatar;
+  const visitingAddress = target?.visitingAddress;
 
   const statusColors = {
     Pending: 'bg-amber-100 text-amber-900 border-amber-500',
@@ -20,10 +27,10 @@ export const AppointmentCard = ({ appointment, onJoin }) => {
   return (
     <Card className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-2 hover:border-black transition-all">
       <div className="flex items-start space-x-4">
-        <Avatar src={psychologist?.avatar} name={psychologist?.name || 'Psychologist'} size="lg" />
+        <Avatar src={avatar} name={displayName} size="lg" />
         <div>
           <div className="flex items-center space-x-2 flex-wrap gap-1">
-            <h4 className="text-base font-black text-black">{psychologist?.name || 'Dr. Therapist'}</h4>
+            <h4 className="text-base font-black text-black">{displayName}</h4>
             <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${statusColors[status] || statusColors.Pending}`}>
               {status}
             </span>
@@ -32,21 +39,27 @@ export const AppointmentCard = ({ appointment, onJoin }) => {
             </span>
           </div>
 
-          <p className="text-xs font-semibold text-neutral-600 mt-0.5">{psychologist?.title || 'Clinical Practitioner'}</p>
+          {displayTitle && (
+            <p className="text-xs font-semibold text-neutral-600 mt-0.5">{displayTitle}</p>
+          )}
 
           <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-neutral-700 mt-2">
-            <span className="flex items-center">
-              <Calendar className="w-3.5 h-3.5 mr-1 text-[#B82126]" />
-              {date || 'Upcoming'}
-            </span>
-            <span className="flex items-center">
-              <Clock className="w-3.5 h-3.5 mr-1 text-[#B82126]" />
-              {timeSlot || '02:00 PM'} ({duration || 50}m)
-            </span>
-            {!isVideo && psychologist?.visitingAddress && (
+            {date && (
+              <span className="flex items-center">
+                <Calendar className="w-3.5 h-3.5 mr-1 text-[#9F1239]" />
+                {date}
+              </span>
+            )}
+            {timeSlot && (
+              <span className="flex items-center">
+                <Clock className="w-3.5 h-3.5 mr-1 text-[#9F1239]" />
+                {timeSlot} {duration ? `(${duration}m)` : ''}
+              </span>
+            )}
+            {!isVideo && visitingAddress && (
               <span className="flex items-center text-neutral-600">
-                <MapPin className="w-3.5 h-3.5 mr-1 text-[#B82126]" />
-                {psychologist.visitingAddress}
+                <MapPin className="w-3.5 h-3.5 mr-1 text-[#9F1239]" />
+                {visitingAddress}
               </span>
             )}
           </div>

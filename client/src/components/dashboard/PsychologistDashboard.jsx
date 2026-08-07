@@ -189,23 +189,21 @@ export const PsychologistDashboard = () => {
     <div className="space-y-8">
       {/* Verification Status Banner */}
       <div
-        className={`p-6 rounded-2xl polo-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${
-          verificationStatus === 'Verified'
-            ? 'bg-emerald-50 border-emerald-600 text-emerald-950'
-            : verificationStatus === 'Rejected'
+        className={`p-6 rounded-2xl polo-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 ${verificationStatus === 'Verified'
+          ? 'bg-emerald-50 border-emerald-600 text-emerald-950'
+          : verificationStatus === 'Rejected'
             ? 'bg-red-50 border-red-600 text-red-950'
             : 'bg-amber-50 border-amber-500 text-amber-950'
-        }`}
+          }`}
       >
         <div className="flex items-center space-x-4">
           <div
-            className={`p-3 rounded-xl polo-border text-white ${
-              verificationStatus === 'Verified'
-                ? 'bg-emerald-600'
-                : verificationStatus === 'Rejected'
+            className={`p-3 rounded-xl polo-border text-white ${verificationStatus === 'Verified'
+              ? 'bg-emerald-600'
+              : verificationStatus === 'Rejected'
                 ? 'bg-red-600'
                 : 'bg-amber-500'
-            }`}
+              }`}
           >
             {verificationStatus === 'Verified' && <CheckCircle2 className="w-6 h-6" />}
             {verificationStatus === 'Rejected' && <XCircle className="w-6 h-6" />}
@@ -231,7 +229,7 @@ export const PsychologistDashboard = () => {
       <Card className="space-y-4">
         <div className="flex items-center justify-between pb-3 border-b-2 border-neutral-200">
           <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-[#B82126] text-white rounded-xl polo-border">
+            <div className="p-2.5 bg-[#9F1239] text-white rounded-xl polo-border">
               <Bell className="w-5 h-5" />
             </div>
             <div>
@@ -274,7 +272,7 @@ export const PsychologistDashboard = () => {
                       </span>
                     </div>
                     <p className="text-xs font-bold text-neutral-600">
-                      Date: <span className="text-black">{app.date}</span> at <span className="text-[#B82126]">{app.timeSlot}</span>
+                      Date: <span className="text-black">{app.date}</span> at <span className="text-[#9F1239]">{app.timeSlot}</span>
                     </p>
                     <div className="flex items-center space-x-2 text-[11px] font-semibold text-neutral-700 mt-1">
                       <span className="px-2 py-0.5 bg-white polo-border rounded font-black text-black">{app.mode}</span>
@@ -325,7 +323,7 @@ export const PsychologistDashboard = () => {
                       </span>
                     </div>
                     <p className="text-xs font-bold text-neutral-600">
-                      Date: <span className="text-black">{app.date}</span> at <span className="text-[#B82126]">{app.timeSlot}</span>
+                      Date: <span className="text-black">{app.date}</span> at <span className="text-[#9F1239]">{app.timeSlot}</span>
                     </p>
                     <span className="inline-block text-[11px] font-black text-black mt-1 px-2 py-0.5 bg-white polo-border rounded">
                       Mode: {app.mode}
@@ -363,7 +361,7 @@ export const PsychologistDashboard = () => {
         {/* Profile Management Card */}
         <Card className="space-y-6">
           <div className="flex items-center space-x-3 pb-3 border-b-2 border-neutral-200">
-            <div className="p-2.5 bg-[#B82126] text-white rounded-xl polo-border">
+            <div className="p-2.5 bg-[#9F1239] text-white rounded-xl polo-border">
               <UserCheck className="w-5 h-5" />
             </div>
             <div>
@@ -436,7 +434,7 @@ export const PsychologistDashboard = () => {
                 value={profileData.bio}
                 onChange={handleProfileChange}
                 placeholder="Brief description of your expertise, therapeutic approach, and visiting hours..."
-                className="w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium placeholder:text-neutral-400 focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#B82126]"
+                className="w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium placeholder:text-neutral-400 focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#9F1239]"
               />
             </div>
 
@@ -496,7 +494,7 @@ export const PsychologistDashboard = () => {
                     type="number"
                     value={newSlot.durationMinutes}
                     onChange={(e) => setNewSlot({ ...newSlot, durationMinutes: Number(e.target.value) })}
-                    className="w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium placeholder:text-neutral-400 focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#B82126]"
+                    className="w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium placeholder:text-neutral-400 focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#9F1239]"
                   />
                 </div>
 
@@ -507,7 +505,7 @@ export const PsychologistDashboard = () => {
                   <select
                     value={newSlot.mode}
                     onChange={(e) => setNewSlot({ ...newSlot, mode: e.target.value })}
-                    className="w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#B82126]"
+                    className="w-full bg-white text-black px-4 py-3 text-sm rounded-xl font-medium focus:outline-none transition-all duration-150 polo-border focus:shadow-[4px_4px_0px_0px_#9F1239]"
                   >
                     <option value="Online Video">Online Video Consultation</option>
                     <option value="In-Person Clinic">In-Person Clinic Visit</option>
@@ -526,7 +524,7 @@ export const PsychologistDashboard = () => {
           <Card className="space-y-4">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-black uppercase text-black">Active Visiting Dates & Slots</h4>
-              <span className="text-xs font-extrabold text-[#B82126]">{slots.length} Slots</span>
+              <span className="text-xs font-extrabold text-[#9F1239]">{slots.length} Slots</span>
             </div>
 
             {loadingSlots ? (
@@ -546,7 +544,7 @@ export const PsychologistDashboard = () => {
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
                         <span className="text-xs font-black text-black flex items-center">
-                          <CalendarIcon className="w-3.5 h-3.5 mr-1 text-[#B82126]" />
+                          <CalendarIcon className="w-3.5 h-3.5 mr-1 text-[#9F1239]" />
                           {slot.dayOrDate}
                         </span>
                         <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-white polo-border rounded">

@@ -43,7 +43,7 @@ export const Profile = () => {
             <div>
               <h3 className="text-xl font-black text-black">{user?.name}</h3>
               <p className="text-xs text-neutral-500 font-semibold">{user?.email}</p>
-              <span className="inline-block mt-2 text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-[#B82126] text-white polo-border">
+              <span className="inline-block mt-2 text-[10px] font-black uppercase px-2.5 py-1 rounded-lg bg-[#9F1239] text-white polo-border">
                 Role: {user?.role || 'user'}
               </span>
             </div>
@@ -57,7 +57,7 @@ export const Profile = () => {
                 Personal Bio
               </label>
               <textarea
-                className="w-full bg-white text-black p-3 text-sm rounded-xl polo-border focus:shadow-[4px_4px_0px_0px_#B82126] focus:outline-none min-h-[100px]"
+                className="w-full bg-white text-black p-3 text-sm rounded-xl polo-border focus:shadow-[4px_4px_0px_0px_#9F1239] focus:outline-none min-h-[100px]"
                 placeholder="Share a brief bio..."
                 {...register('bio')}
               />

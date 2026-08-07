@@ -52,11 +52,10 @@ export const Appointments = () => {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all mb-1 ${
-                activeTab === tab
-                  ? 'bg-[#B82126] text-white polo-border polo-shadow-sm'
-                  : 'bg-white text-black border-2 border-transparent hover:bg-neutral-100'
-              }`}
+              className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all mb-1 ${activeTab === tab
+                ? 'bg-[#9F1239] text-white polo-border polo-shadow-sm'
+                : 'bg-white text-black border-2 border-transparent hover:bg-neutral-100'
+                }`}
             >
               {tab}
             </button>

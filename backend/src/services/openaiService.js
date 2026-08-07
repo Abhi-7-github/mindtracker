@@ -1,20 +1,32 @@
 import fs from 'fs';
-import OpenAI from 'openai';
+import OpenAI, { toFile } from 'openai';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export async function transcribeAudio(filePath) {
+export async function transcribeAudio(filePath, originalname = 'audio.webm') {
   try {
-    const file = fs.createReadStream(filePath);
-    const resp = await client.audio.transcriptions.create({ file, model: 'whisper-1' });
-    return resp.text ?? resp;
+    if (!filePath || !fs.existsSync(filePath)) {
+      return '';
+    }
+
+    const buffer = fs.readFileSync(filePath);
+    const ext = originalname.endsWith('.wav') ? 'audio.wav' : originalname.endsWith('.mp3') ? 'audio.mp3' : 'audio.webm';
+    const file = await toFile(buffer, ext);
+
+    const resp = await client.audio.transcriptions.create({
+      file,
+      model: 'whisper-1',
+    });
+
+    return (resp?.text || (typeof resp === 'string' ? resp : '')).trim();
   } catch (err) {
     console.error('[OpenAI Whisper Error]:', err?.message || err);
-    return "Recorded voice check-in (Audio transcription processed).";
+    return '';
   }
 }
+
 
 export async function analyzeConversation(transcript) {
   try {

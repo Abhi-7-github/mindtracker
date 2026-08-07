@@ -2,14 +2,15 @@
 
 @layer base {
   :root {
-    --polo-primary: #B82126;
-    --polo-hover: #8A181C;
+    --polo-primary: #ff6e28;
+    --polo-hover: #d44000;
     --polo-black: #000000;
     --polo-white: #FFFFFF;
     --polo-bg: #F5F5F5;
     --polo-dark-card: #1A1A1A;
-    --font-sans: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
   }
 
   body {
@@ -20,8 +21,22 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
   }
 }
+
 
 /* Neo-Brutalism & Glassmorphism Utility Classes */
 .polo-border {
@@ -37,7 +52,7 @@
 }
 
 .polo-shadow-red {
-  box-shadow: 4px 4px 0px 0px #B82126;
+  box-shadow: 4px 4px 0px 0px #9F1239;
 }
 
 .polo-shadow-sm {
@@ -82,7 +97,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #B82126;
+  background: #9F1239;
   border-radius: 4px;
   border: 2px solid #000000;
 }
@@ -93,8 +108,15 @@
 
 /* Wave Animation */
 @keyframes pulse-wave {
-  0%, 100% { transform: scaleY(0.3); }
-  50% { transform: scaleY(1); }
+
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+
+  50% {
+    transform: scaleY(1);
+  }
 }
 
 .animate-wave-bar {

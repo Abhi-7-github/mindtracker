@@ -1,6 +1,6 @@
-# MindBridge AI — Backend Services
+# POLO AI — Backend Services
 
-Production-ready Node.js & Express backend for MindBridge AI. Features real-time WebRTC video/audio call signaling with Socket.IO, AI voice transcription with OpenAI Whisper, automated mental health & wellness assessment with GPT-5.1, secure cookie-based JWT authentication, and MongoDB object data modeling.
+Production-ready Node.js & Express backend for POLO AI. Features real-time WebRTC video/audio call signaling with Socket.IO, AI voice transcription with OpenAI Whisper, automated mental health & wellness assessment with GPT-5.1, secure cookie-based JWT authentication, and MongoDB object data modeling.
 
 ---
 
