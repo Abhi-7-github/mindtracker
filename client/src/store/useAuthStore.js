@@ -26,6 +26,10 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await authService.login(credentials);
       if (res.success && res.data) {
+        if (res.token) {
+          localStorage.setItem('polo_token', res.token);
+          localStorage.setItem('token', res.token);
+        }
         set({ user: res.data, isAuthenticated: true, isLoading: false });
         return { success: true };
       }
@@ -41,6 +45,10 @@ export const useAuthStore = create((set, get) => ({
     try {
       const res = await authService.register(userData);
       if (res.success && res.data) {
+        if (res.token) {
+          localStorage.setItem('polo_token', res.token);
+          localStorage.setItem('token', res.token);
+        }
         set({ user: res.data, isAuthenticated: true, isLoading: false });
         return { success: true };
       }
@@ -53,6 +61,8 @@ export const useAuthStore = create((set, get) => ({
 
   logout: async () => {
     try {
+      localStorage.removeItem('polo_token');
+      localStorage.removeItem('token');
       await authService.logout();
     } catch (e) {
       // Ignore
@@ -60,6 +70,7 @@ export const useAuthStore = create((set, get) => ({
       set({ user: null, isAuthenticated: false, isLoading: false, error: null });
     }
   },
+
 
   updateProfile: async (payload) => {
     set({ isLoading: true });

@@ -3,8 +3,9 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || 'polo-secret-key-production-jwt-333';
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
+
 
 export async function registerUser({ name, email, password, role }) {
   const existing = await User.findOne({ email });
