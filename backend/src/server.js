@@ -6,14 +6,22 @@ import app from './app.js';
 import { connectDB, getDBState } from './config/db.js';
 import signaling from './socket/signaling.js';
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 9090;
 
 async function start() {
   await connectDB();
   const db = getDBState();
   console.log(`MongoDB state: ${db.state} (${db.code})`);
   const server = http.createServer(app);
-  const io = new Server(server, { cors: { origin: process.env.CLIENT_URL, methods: ['GET', 'POST'] } });
+
+  const io = new Server(server, {
+    cors: {
+      origin: process.env.CLIENT_URL || 'http://localhost:5173',
+      methods: ['GET', 'POST'],
+      credentials: true
+    }
+  });
+
   signaling(io);
   server.listen(PORT, () => console.log(`Server listening on ${PORT}`));
 }

@@ -3,13 +3,30 @@ import bcrypt from 'bcryptjs';
 
 const { Schema, model } = mongoose;
 
+const SlotSchema = new Schema({
+  dayOrDate: { type: String, required: true },
+  startTime: { type: String, required: true },
+  endTime: { type: String, required: true },
+  durationMinutes: { type: Number, default: 50 },
+  mode: { type: String, enum: ['In-Person Clinic', 'Online Video', 'Both'], default: 'In-Person Clinic' },
+  createdAt: { type: Date, default: Date.now }
+});
+
 const UserSchema = new Schema({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['user', 'psychologist', 'admin'], default: 'user' },
-  bio: { type: String },
-  avatar: { type: String },
+  bio: { type: String, default: '' },
+  avatar: { type: String, default: '' },
+  // Psychologist specific fields
+  isVerified: { type: Boolean, default: false },
+  verificationStatus: { type: String, enum: ['Pending', 'Verified', 'Rejected'], default: 'Pending' },
+  title: { type: String, default: '' },
+  specialties: [{ type: String }],
+  experience: { type: String, default: '' },
+  visitingAddress: { type: String, default: '' },
+  visitingSlots: [SlotSchema],
   createdAt: { type: Date, default: Date.now }
 });
 

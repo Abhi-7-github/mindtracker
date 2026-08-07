@@ -23,7 +23,23 @@ export async function loginUser({ email, password }) {
 
 function toAuthJSON(user) {
   const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
-  return { user: { id: user._id, name: user.name, email: user.email, role: user.role, avatar: user.avatar }, token };
+  return {
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      isVerified: user.isVerified,
+      verificationStatus: user.verificationStatus,
+      title: user.title,
+      specialties: user.specialties,
+      experience: user.experience,
+      visitingAddress: user.visitingAddress,
+      visitingSlots: user.visitingSlots
+    },
+    token
+  };
 }
 
 export async function getUserById(id) {
@@ -31,7 +47,7 @@ export async function getUserById(id) {
 }
 
 export async function updateProfile(userId, payload) {
-  const allowed = ['name', 'bio', 'avatar'];
+  const allowed = ['name', 'bio', 'avatar', 'title', 'specialties', 'experience', 'visitingAddress'];
   const data = Object.fromEntries(Object.entries(payload).filter(([k]) => allowed.includes(k)));
   return User.findByIdAndUpdate(userId, data, { new: true }).select('-password');
 }

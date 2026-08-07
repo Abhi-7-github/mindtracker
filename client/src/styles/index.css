@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --polo-primary: #B82126;
+    --polo-hover: #8A181C;
+    --polo-black: #000000;
+    --polo-white: #FFFFFF;
+    --polo-bg: #F5F5F5;
+    --polo-dark-card: #1A1A1A;
+    --font-sans: 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--polo-bg);
+    color: var(--polo-black);
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+/* Neo-Brutalism & Glassmorphism Utility Classes */
+.polo-border {
+  border: 2px solid #000000;
+}
+
+.polo-border-dark {
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.polo-shadow {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.polo-shadow-red {
+  box-shadow: 4px 4px 0px 0px #B82126;
+}
+
+.polo-shadow-sm {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.polo-shadow-lg {
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.polo-btn-press {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.polo-btn-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px #000000 !important;
+}
+
+.polo-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid #000000;
+}
+
+.polo-glass-dark {
+  background: rgba(26, 26, 26, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B82126;
+  border-radius: 4px;
+  border: 2px solid #000000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8A181C;
+}
+
+/* Wave Animation */
+@keyframes pulse-wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.animate-wave-bar {
+  animation: pulse-wave 1.2s ease-in-out infinite;
+}

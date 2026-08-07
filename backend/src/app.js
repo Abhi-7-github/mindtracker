@@ -6,6 +6,10 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/authRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import psychologistRoutes from './routes/psychologistRoutes.js';
+import appointmentRoutes from './routes/appointmentRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -24,6 +28,10 @@ app.use(limiter);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/psychologist', psychologistRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/health', (req, res) => res.json({ success: true, message: 'OK' }));
 
