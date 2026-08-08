@@ -229,36 +229,57 @@ export const AIReport = () => {
 
         {/* Recommendation & How to Overcome Plan */}
         <Card className="p-6 space-y-4 border-2 border-[#9F1239]/40 bg-white polo-shadow">
-          <div className="flex items-center space-x-2 text-[#9F1239]">
-            <Lightbulb className="w-5 h-5" />
-            <h3 className="text-sm font-black uppercase tracking-wider">
-              Recommendation & Problem Overcoming Strategy
-            </h3>
+          <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
+            <div className="flex items-center space-x-2 text-[#9F1239]">
+              <Lightbulb className="w-5 h-5" />
+              <h3 className="text-sm font-black uppercase tracking-wider">
+                AI Suggestion Plan & Overcoming Strategy
+              </h3>
+            </div>
+            <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-red-100 text-[#9F1239]">
+              Tailored by AI
+            </span>
           </div>
+
+          {/* Identified Concern from Voice */}
+          {analysis?.problemSummary && (
+            <div className="p-3.5 bg-neutral-100 rounded-xl border border-neutral-200 space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">
+                Identified Core Challenge:
+              </span>
+              <p className="text-xs font-bold text-neutral-900">{analysis.problemSummary}</p>
+            </div>
+          )}
           
-          <div className="p-4 bg-red-50/70 rounded-xl border border-red-200 text-xs font-bold text-neutral-900 leading-relaxed">
-            {recommendation}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#9F1239]">
+              Clinical AI Recommendation:
+            </span>
+            <div className="p-4 bg-red-50/70 rounded-xl border border-red-200 text-xs font-bold text-neutral-900 leading-relaxed">
+              {recommendation}
+            </div>
           </div>
 
           <div className="space-y-2 pt-2">
             <h4 className="text-xs font-black uppercase text-neutral-800">
-              Action Plan to Overcome Current Stress:
+              Personalized Plan to Overcome This Problem:
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {overcomePlan.map((step, idx) => (
                 <div
                   key={idx}
-                  className="p-3 bg-neutral-50 rounded-xl polo-border flex items-start space-x-2 text-xs font-medium text-neutral-800"
+                  className="p-3 bg-neutral-50 rounded-xl polo-border flex items-start space-x-2.5 text-xs font-medium text-neutral-800"
                 >
                   <span className="w-5 h-5 rounded-full bg-[#9F1239] text-white flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">
                     {idx + 1}
                   </span>
-                  <span>{step}</span>
+                  <span className="leading-snug">{step}</span>
                 </div>
               ))}
             </div>
           </div>
         </Card>
+
 
         {/* AI-Generated Journal Section */}
         <Card className="p-6 space-y-6 bg-neutral-50 polo-border">
