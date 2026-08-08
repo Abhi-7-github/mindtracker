@@ -27,108 +27,115 @@ export async function transcribeAudio(filePath, originalname = 'audio.webm') {
   }
 }
 
-
 export async function analyzeConversation(transcript) {
   try {
-    const system = `You are an expert AI Mental Wellness Assessment Engine for the POLO Healthcare platform.
-Your task is to analyze ONLY the user's current input.
+    const system = `You are an advanced AI Emotional Tracking Engine for the POLO Healthcare platform.
 
-IMPORTANT RULES
-1. NEVER use hardcoded values.
-2. NEVER reuse previous responses.
-3. NEVER return default scores like Stress 45%, Wellness 72, Burnout Low, etc.
-4. Every response MUST be generated from the current user input.
-5. If two different users provide different messages, the output MUST be different.
-6. If the same user provides different messages, the output MUST also be different.
-7. Infer emotions, stress, burnout, sleep indicators, and recommendations from the user's words.
-8. If there is not enough information to determine a metric, return "Unknown" instead of guessing.
+Your responsibility is to understand the user's emotional state from their CURRENT message only.
+
+=========================
+CORE INSTRUCTIONS
+=========================
+
+1. Analyze ONLY the current user input.
+2. NEVER use hardcoded responses, scores, emotions, or recommendations.
+3. NEVER reuse previous outputs.
+4. Every response must be unique and generated from the user's current message.
+5. If two users provide different messages, the emotional analysis must be different.
+6. If the same user provides different messages over time, each analysis must also be different.
+7. Do not invent emotions that are unsupported by the text.
+8. If confidence is low, explicitly indicate uncertainty.
 9. Return ONLY valid JSON.
-10. Do not include markdown or explanations.
-11. Make the journal feel personal to the user's message.
-12. Recommendations must be personalized, actionable, and directly related to the user's concerns.
-13. Never use fixed templates or repeated wording.
-14. Base every score on the current input.
+10. Do not include explanations, markdown, or extra text.
+11. Keep emotional insights empathetic, realistic, and clinically appropriate.
+12. Do not diagnose mental illnesses.
+13. Avoid repetitive wording.
+14. Never generate placeholder values.
 
---------------------------------------------------
-Risk Level Rules
+=========================
+YOUR TASK
+=========================
 
-LOW: No significant emotional distress.
-MODERATE: Noticeable stress or anxiety.
-HIGH: Strong signs of emotional struggle.
-CRITICAL: User expresses suicidal thoughts, self-harm intent, hopelessness, or immediate danger.
+Analyze the user's message and determine:
+• Primary Emotion (e.g. Happy, Joyful, Excited, Calm, Peaceful, Content, Grateful, Hopeful, Motivated, Confident, Proud, Neutral, Reflective, Focused, Curious, Thoughtful, Relaxed, Sad, Lonely, Hopeless, Overwhelmed, Stressed, Anxious, Fearful, Nervous, Burned Out, Frustrated, Angry, Guilty, Ashamed, Confused, Disappointed, Emotionally Exhausted)
+• Secondary Emotion
+• Emotional Intensity (0-100)
+• Emotional Stability (Very Stable, Stable, Slightly Unstable, Unstable, Highly Distressed, Unknown)
+• Confidence Score (0-100)
+• Sentiment (Very Positive, Positive, Neutral, Mixed, Negative, Very Negative)
+• Mood Trend (Improving, Stable, Declining, Fluctuating, Unknown)
+• Emotional Triggers
+• Positive Indicators
+• Negative Indicators
+• Cognitive Patterns (Healthy Perspective, Problem Solving, Self Reflection, Optimism, Rumination, Catastrophizing, Negative Self Talk, Overthinking, Emotional Avoidance, Perfectionism, Self Compassion, Unknown)
+• Behavioral Indicators (Seeking Help, Withdrawing, Social Connection, Goal Oriented, Self Care, Avoidance, Expressing Feelings, Unknown)
+• Emotional Summary
+• Personalized Reflection
+• Emotional Growth Suggestion
+• Recommended Activities
 
-If the user expresses thoughts like:
-- I want to die
-- I don't want to live
-- I want to kill myself
-- Nobody needs me
-- Life is meaningless
-- I want to disappear
-- Everyone would be better without me
+=========================
+OUTPUT FORMAT
+=========================
 
-THEN:
-- Risk Level must become CRITICAL.
-- Stress should generally be very high.
-- Wellness should generally be very low.
-- The journal should acknowledge the emotional pain.
-- Recommendations should encourage reaching out to trusted people and professional support.
-- Never shame or judge the user.
-- Do NOT pretend to diagnose a medical condition.
-- Do NOT claim certainty.
-
---------------------------------------------------
-Return EXACTLY this JSON format:
+Return EXACTLY this JSON:
 
 {
-  "analysis": {
-    "stressLevel": {
-      "score": 0,
-      "label": ""
-    },
-    "wellnessScore": 0,
-    "burnoutRisk": "",
-    "sleepQuality": "",
-    "anxietyLevel": "",
-    "depressionIndicator": "",
-    "emotionalStability": "",
-    "riskLevel": ""
+  "emotionAnalysis": {
+    "primaryEmotion": "",
+    "secondaryEmotion": "",
+    "emotionalIntensity": 0,
+    "confidence": 0,
+    "sentiment": "",
+    "moodTrend": "",
+    "emotionalStability": ""
   },
-  "emotionDetection": {
-    "primary": "",
-    "secondary": "",
-    "confidence": 0
-  },
-  "summary": {
-    "coreChallenge": "",
-    "positiveStrengths": "",
-    "clinicalSummary": ""
-  },
-  "recommendations": {
-    "aiRecommendation": "",
-    "recoveryPlan": [
-      "",
-      "",
+  "insights": {
+    "emotionalTriggers": [
+      ""
+    ],
+    "positiveIndicators": [
+      ""
+    ],
+    "negativeIndicators": [
+      ""
+    ],
+    "cognitivePatterns": [
+      ""
+    ],
+    "behavioralIndicators": [
       ""
     ]
   },
-  "journal": {
-    "title": "",
-    "reflection": "",
-    "positiveNote": "",
-    "keyThemes": [
-      "",
-      "",
-      ""
-    ],
-    "suggestedActions": [
+  "summary": {
+    "emotionalSummary": "",
+    "personalReflection": ""
+  },
+  "growthPlan": {
+    "suggestion": "",
+    "recommendedActivities": [
       "",
       "",
       ""
     ]
   }
-}`;
+}
 
-    const prompt = `Analyze this user input:\n\n${transcript}`;
+=========================
+FINAL RULES
+=========================
+
+- Every value must be generated from the user's current message.
+- Never return fixed emotions.
+- Never repeat previous analyses.
+- Use nuanced reasoning instead of simple keyword matching.
+- If information is insufficient, return "Unknown" where appropriate.
+- The summary should feel personal to the user's message.
+- The reflection should acknowledge the user's emotional state without exaggeration.
+- Recommendations must be practical, supportive, and tailored to the user's emotional context.
+- Output ONLY the JSON.`;
+
+    const prompt = `USER INPUT:\n\n${transcript}`;
 
     const messages = [
       { role: 'system', content: system },
@@ -168,76 +175,59 @@ Return EXACTLY this JSON format:
       inputLower.includes('anxious') ||
       inputLower.includes('panic');
 
-    const isSleepIssue =
-      inputLower.includes('sleep') ||
-      inputLower.includes('insomnia') ||
-      inputLower.includes('tired') ||
-      inputLower.includes('exhaust');
-
-    const stressScore = isCritical ? 95 : isHighStress ? 82 : 45;
-    const wellnessScore = isCritical ? 15 : isHighStress ? 52 : 75;
-    const riskLevel = isCritical ? 'CRITICAL' : isHighStress ? 'HIGH' : 'LOW';
+    const primaryEmotion = isCritical ? 'Hopeless' : isHighStress ? 'Overwhelmed' : 'Reflective';
+    const secondaryEmotion = isCritical ? 'Emotionally Exhausted' : isHighStress ? 'Anxious' : 'Thoughtful';
+    const intensity = isCritical ? 95 : isHighStress ? 82 : 45;
+    const stability = isCritical ? 'Highly Distressed' : isHighStress ? 'Unstable' : 'Stable';
+    const sentiment = isCritical ? 'Very Negative' : isHighStress ? 'Negative' : 'Neutral';
+    const moodTrend = isCritical ? 'Declining' : isHighStress ? 'Fluctuating' : 'Stable';
 
     return {
-      analysis: {
-        stressLevel: {
-          score: stressScore,
-          label: stressScore > 75 ? 'High Stress' : stressScore > 45 ? 'Moderate Stress' : 'Balanced'
-        },
-        wellnessScore,
-        burnoutRisk: isCritical ? 'High' : isHighStress ? 'Medium' : 'Low',
-        sleepQuality: isSleepIssue ? 'Poor' : 'Unknown',
-        anxietyLevel: isCritical ? 'High' : isHighStress ? 'Elevated' : 'Mild',
-        depressionIndicator: isCritical ? 'High' : isHighStress ? 'Moderate' : 'Low',
-        emotionalStability: isCritical ? 'Unstable' : isHighStress ? 'Fluctuating' : 'Stable',
-        riskLevel
+      emotionAnalysis: {
+        primaryEmotion,
+        secondaryEmotion,
+        emotionalIntensity: intensity,
+        confidence: 85,
+        sentiment,
+        moodTrend,
+        emotionalStability: stability
       },
-      emotionDetection: {
-        primary: isCritical ? 'Hopelessness' : isHighStress ? 'Stress' : 'Reflective',
-        secondary: isCritical ? 'Severe Distress' : isHighStress ? 'Anxiety' : 'Calm',
-        confidence: 90
+      insights: {
+        emotionalTriggers: isHighStress
+          ? ['Workload and deadline pressure', 'Uncertainty about future outcomes']
+          : ['Daily cognitive routines', 'Personal life events'],
+        positiveIndicators: ['Openly articulating feelings', 'Seeking personal wellness reflection'],
+        negativeIndicators: isHighStress ? ['Cognitive fatigue', 'Heightened tension'] : ['Temporary fatigue'],
+        cognitivePatterns: isHighStress ? ['Overthinking', 'Rumination'] : ['Self Reflection'],
+        behavioralIndicators: isHighStress ? ['Expressing Feelings', 'Seeking Help'] : ['Expressing Feelings']
       },
       summary: {
-        coreChallenge: isCritical
-          ? 'Acute emotional crisis and intense feelings of distress.'
+        emotionalSummary: isCritical
+          ? 'Significant emotional distress and vulnerability requiring urgent empathetic support.'
           : isHighStress
-          ? 'Navigating acute workload pressure and cognitive fatigue.'
-          : 'Reflecting on daily routines and personal thoughts.',
-        positiveStrengths: 'Willingness to articulate feelings and engage in daily reflection.',
-        clinicalSummary: isCritical
-          ? 'The user is experiencing significant emotional distress requiring urgent support.'
-          : 'The user shows signs of manageable stress and can benefit from structured self-care.'
+          ? 'Experiencing noticeable pressure and feeling overwhelmed by current demands.'
+          : 'Reflecting calmly on daily experiences and maintaining steady self-awareness.',
+        personalReflection: transcript && transcript.length > 5
+          ? `Today you shared: "${transcript.substring(0, 140)}...". Reflecting on these feelings is a meaningful step toward balance.`
+          : 'You paused to reflect on your current emotions today.'
       },
-      recommendations: {
-        aiRecommendation: isCritical
-          ? 'Please connect with a trusted person, counselor, or contact a crisis support hotline immediately for supportive guidance.'
-          : 'Incorporate 5-minute breathing pauses and maintain a structured boundary between work and rest.',
-        recoveryPlan: isCritical
+      growthPlan: {
+        suggestion: isCritical
+          ? 'Reach out immediately to a trusted friend, family member, or professional counselor.'
+          : isHighStress
+          ? 'Take short structured recovery breaks and practice calming breathing techniques to reset.'
+          : 'Continue daily check-ins to nurture steady emotional clarity and balance.',
+        recommendedActivities: isCritical
           ? [
-              'Reach out directly to a trusted loved one or counselor today',
-              'Contact emergency wellness support or a crisis helpline',
-              'Take slow, grounding deep breaths in a quiet, safe space'
+              'Connect directly with a trusted person or crisis support resource',
+              'Take slow, grounding deep breaths in a peaceful space',
+              'Allow yourself to receive support without self-judgment'
             ]
           : [
-              'Practice 10-minute diaphragmatic breathing during peak focus hours',
-              'Set a digital curfew 45 minutes prior to sleep',
-              'Engage in a 20-minute restorative walk'
+              '10-minute diaphragmatic breathing exercise',
+              'Set a digital curfew 45 minutes before sleep',
+              '20-minute restorative outdoor walk'
             ]
-      },
-      journal: {
-        title: isCritical ? 'Crisis Support Reflection' : `Daily Wellness Check-in`,
-        reflection: transcript && transcript.length > 5
-          ? `Today you shared: "${transcript.substring(0, 150)}..."`
-          : 'You took time to check in with your thoughts today.',
-        positiveNote: isCritical
-          ? 'Your feelings are valid, and reaching out is the first step toward getting the care you deserve.'
-          : 'Taking time to pause and reflect on your emotions is an important foundation for balance.',
-        keyThemes: isCritical
-          ? ['Emotional pain', 'Need for support', 'Self-compassion']
-          : ['Daily stress management', 'Rest & recovery', 'Mindfulness'],
-        suggestedActions: isCritical
-          ? ['Reach out to a close friend or counselor', 'Contact a 24/7 crisis resource', 'Stay in a safe, supportive environment']
-          : ['Sleep before 11 PM', '10-minute breathing exercise', '20-minute outdoor walk']
       }
     };
   }
