@@ -26,11 +26,23 @@ export async function handleVoiceCheckin(req, res, next) {
 
     const analysis = await analyzeConversation(transcript);
 
+    // format structured journal content
+    let journalContent = analysis.dailyJournal || transcript || 'Voice check-in processed.';
+    if (analysis.keyThemes && analysis.keyThemes.length > 0) {
+      journalContent += `\n\nKey themes:\n• ` + analysis.keyThemes.join('\n• ');
+    }
+    if (analysis.positiveNote) {
+      journalContent += `\n\nPositive note:\n${analysis.positiveNote}`;
+    }
+    if (analysis.suggestedActions && analysis.suggestedActions.length > 0) {
+      journalContent += `\n\nSuggested actions:\n• ` + analysis.suggestedActions.join('\n• ');
+    }
+
     // create journal
     const journal = await Journal.create({
       user: req.user.id,
-      title: 'AI Journal — Voice Check-in',
-      content: analysis.dailyJournal || transcript || 'Voice check-in processed.',
+      title: `AI Journal — ${analysis.primaryEmotion || 'Daily'} Check-in`,
+      content: journalContent,
       generatedByAI: true
     });
 
@@ -41,6 +53,7 @@ export async function handleVoiceCheckin(req, res, next) {
       journalId: journal._id,
       wellnessPlan: analysis.wellnessPlan
     });
+
 
     res.json({
       success: true,
