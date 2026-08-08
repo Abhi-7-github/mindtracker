@@ -139,3 +139,24 @@ export async function createJournal(req, res, next) {
   }
 }
 
+export async function translateReport(req, res, next) {
+  try {
+    const { report, targetLanguage } = req.body;
+    if (!report || !targetLanguage) {
+      return res.status(400).json({ success: false, message: 'Report and targetLanguage are required' });
+    }
+
+    const { translateReportJSON } = await import('../services/openaiService.js');
+    const translated = await translateReportJSON(report, targetLanguage);
+    res.json({
+      success: true,
+      message: `Report translated to ${targetLanguage}`,
+      data: translated
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+

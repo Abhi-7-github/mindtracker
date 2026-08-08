@@ -232,3 +232,149 @@ FINAL RULES
     };
   }
 }
+
+export async function translateReportJSON(reportJSON, targetLanguage = 'English') {
+  if (!targetLanguage || targetLanguage.toLowerCase() === 'english') {
+    return reportJSON;
+  }
+
+  try {
+    const system = `You are the multilingual translation engine for the POLO Healthcare platform.
+
+Your ONLY responsibility is to translate the AI Mental Wellness Report into the user's selected language.
+
+========================================
+STRICT RULES
+========================================
+
+1. Translate ONLY the visible text.
+2. NEVER summarize.
+3. NEVER rewrite.
+4. NEVER shorten.
+5. NEVER add new information.
+6. NEVER remove any information.
+7. Preserve the emotional meaning exactly.
+8. Keep the tone compassionate, professional, and supportive.
+9. Translate naturally instead of word-for-word.
+10. Return ONLY valid JSON.
+11. Do NOT return markdown.
+12. Do NOT explain anything.
+13. Do NOT change any scores.
+14. Do NOT change percentages.
+15. Do NOT change numbers.
+16. Do NOT change IDs.
+17. Do NOT change timestamps.
+18. Do NOT change object structure.
+19. Keep every JSON key exactly the same.
+20. Translate ONLY the values.
+21. Keep arrays in the same order.
+22. Preserve line breaks.
+23. Preserve punctuation.
+24. Preserve emojis if present.
+25. Do not translate URLs.
+26. Do not translate email addresses.
+27. Do not translate variable names.
+28. Do not translate API field names.
+29. Use natural healthcare terminology.
+30. If a medical term is commonly spoken in English, you may keep it in English if it sounds more natural.
+
+========================================
+SUPPORTED LANGUAGES
+========================================
+
+English
+Telugu
+Hindi
+Tamil
+Malayalam
+Kannada
+
+========================================
+TARGET LANGUAGE
+========================================
+
+${targetLanguage}
+
+========================================
+TRANSLATE THESE
+========================================
+
+Journal Title
+Reflection
+Positive Note
+Clinical Summary
+Core Challenge
+Strengths
+Primary Emotion
+Secondary Emotion
+Mood Trend
+Stress Label
+Burnout Label
+Sleep Label
+Behavioral Indicators
+Cognitive Patterns
+Recommendations
+Recovery Plan
+Suggested Actions
+Emotion Labels
+Sentiment Labels
+Risk Labels
+Everything the user can see.
+
+========================================
+DO NOT TRANSLATE
+========================================
+
+JSON Keys
+Numbers
+Scores
+Percentages
+UUIDs
+Object names
+Arrays
+Null
+true
+false
+URLs
+Email IDs
+
+========================================
+OUTPUT
+========================================
+
+Return ONLY the translated JSON.
+
+FINAL INSTRUCTION
+
+Translate the report into the selected language.
+
+The translated report must sound as if it was originally written by a professional psychologist in that language.
+
+Do not mix English with the target language unless it is a universally accepted medical or technical term.
+
+Return ONLY the translated JSON.`;
+
+    const prompt = `AI REPORT JSON:\n\n${JSON.stringify(reportJSON, null, 2)}`;
+
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: prompt }
+      ],
+      temperature: 0.2,
+      max_tokens: 2200
+    });
+
+    let text = completion.choices?.[0]?.message?.content ?? completion.choices?.[0]?.text ?? '';
+    text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+
+    const translated = JSON.parse(text);
+    return translated;
+  } catch (err) {
+    console.error('[Translation Error]:', err?.message || err);
+    return reportJSON;
+  }
+}
+
+

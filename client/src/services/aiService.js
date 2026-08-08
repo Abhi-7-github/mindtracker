@@ -24,3 +24,8 @@ export async function createJournal(data) {
   return api.post('/api/ai/journals', data);
 }
 
+export async function translateReport(report, targetLanguage) {
+  return api.post('/api/ai/translate-report', { report, targetLanguage });
+}
+
+
