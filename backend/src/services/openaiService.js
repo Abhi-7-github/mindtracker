@@ -30,53 +30,105 @@ export async function transcribeAudio(filePath, originalname = 'audio.webm') {
 
 export async function analyzeConversation(transcript) {
   try {
-    const system = `You are POLO AI, an empathetic clinical psychologist and mental wellness AI expert. You analyze voice check-in transcripts from users and generate personalized psychological assessments, root-cause problem identification, and actionable overcoming plans based strictly on what the user spoke. Respond ONLY with valid JSON.`;
-    const prompt = `Analyze the following user voice check-in transcript. Generate a deeply personalized, empathetic, and clinically-sound JSON assessment specifically tailored to the problems, emotions, and thoughts mentioned in their speech:
+    const system = `You are an expert AI Mental Wellness Assessment Engine for the POLO Healthcare platform.
+Your task is to analyze ONLY the user's current input.
 
-Return a JSON object with this exact schema:
+IMPORTANT RULES
+1. NEVER use hardcoded values.
+2. NEVER reuse previous responses.
+3. NEVER return default scores like Stress 45%, Wellness 72, Burnout Low, etc.
+4. Every response MUST be generated from the current user input.
+5. If two different users provide different messages, the output MUST be different.
+6. If the same user provides different messages, the output MUST also be different.
+7. Infer emotions, stress, burnout, sleep indicators, and recommendations from the user's words.
+8. If there is not enough information to determine a metric, return "Unknown" instead of guessing.
+9. Return ONLY valid JSON.
+10. Do not include markdown or explanations.
+11. Make the journal feel personal to the user's message.
+12. Recommendations must be personalized, actionable, and directly related to the user's concerns.
+13. Never use fixed templates or repeated wording.
+14. Base every score on the current input.
+
+--------------------------------------------------
+Risk Level Rules
+
+LOW: No significant emotional distress.
+MODERATE: Noticeable stress or anxiety.
+HIGH: Strong signs of emotional struggle.
+CRITICAL: User expresses suicidal thoughts, self-harm intent, hopelessness, or immediate danger.
+
+If the user expresses thoughts like:
+- I want to die
+- I don't want to live
+- I want to kill myself
+- Nobody needs me
+- Life is meaningless
+- I want to disappear
+- Everyone would be better without me
+
+THEN:
+- Risk Level must become CRITICAL.
+- Stress should generally be very high.
+- Wellness should generally be very low.
+- The journal should acknowledge the emotional pain.
+- Recommendations should encourage reaching out to trusted people and professional support.
+- Never shame or judge the user.
+- Do NOT pretend to diagnose a medical condition.
+- Do NOT claim certainty.
+
+--------------------------------------------------
+Return EXACTLY this JSON format:
+
 {
-  "primaryEmotion": "dominant emotion expressed by the user (e.g., Stress, Anxiety, Fatigue, Overwhelmed, Sadness, Hopeful, Calm, Gratitude, Frustration)",
-  "secondaryEmotion": "secondary emotion identified in speech",
-  "stressScore": number (0 to 100, dynamically evaluated based on speech content),
-  "anxietyScore": number (0 to 100, dynamically evaluated),
-  "burnoutScore": number (0 to 100, dynamically evaluated),
-  "burnoutRisk": "Low" | "Medium" | "High" | "Critical",
-  "sleepQuality": "Good" | "Moderate" | "Poor" | "Disturbed",
-  "wellnessScore": number (0 to 100, overall mental wellness index),
-  "problemSummary": "1-sentence summary of the main challenge or friction the user expressed",
-  "recommendation": "A personalized clinical recommendation directly addressing how the user can manage and resolve their specific issue",
-  "overcomePlan": [
-    "Concrete action step 1 specifically addressing how to overcome their mentioned problem",
-    "Concrete action step 2 addressing physical / cognitive recovery",
-    "Concrete action step 3 addressing boundary setting or routine adjustment"
-  ],
-  "dailyJournal": "A personalized 2-sentence journal reflection summarizing what the user expressed today and validating their feelings",
-  "keyThemes": [
-    "Theme 1 from speech",
-    "Theme 2 from speech",
-    "Theme 3 from speech"
-  ],
-  "positiveNote": "An encouraging, empathetic positive affirmation tailored to their specific situation",
-  "suggestedActions": [
-    "Practical daily task 1",
-    "Practical daily task 2",
-    "Practical daily task 3"
-  ],
-  "wellnessSummary": "A concise summary of their current mental balance and trajectory",
-  "wellnessPlan": {
-    "recommendations": [
-      "Key recommendation 1",
-      "Key recommendation 2",
-      "Key recommendation 3"
+  "analysis": {
+    "stressLevel": {
+      "score": 0,
+      "label": ""
+    },
+    "wellnessScore": 0,
+    "burnoutRisk": "",
+    "sleepQuality": "",
+    "anxietyLevel": "",
+    "depressionIndicator": "",
+    "emotionalStability": "",
+    "riskLevel": ""
+  },
+  "emotionDetection": {
+    "primary": "",
+    "secondary": "",
+    "confidence": 0
+  },
+  "summary": {
+    "coreChallenge": "",
+    "positiveStrengths": "",
+    "clinicalSummary": ""
+  },
+  "recommendations": {
+    "aiRecommendation": "",
+    "recoveryPlan": [
+      "",
+      "",
+      ""
     ]
   },
-  "psychologistRecommendation": "Contextual advice on when/why discussing these specific symptoms with a licensed psychologist is advisable",
-  "crisisDetection": false,
-  "disclaimer": "This assessment is AI-generated and should not be considered medical advice."
-}
+  "journal": {
+    "title": "",
+    "reflection": "",
+    "positiveNote": "",
+    "keyThemes": [
+      "",
+      "",
+      ""
+    ],
+    "suggestedActions": [
+      "",
+      "",
+      ""
+    ]
+  }
+}`;
 
-User Transcript to analyze:
-"""${transcript}"""`;
+    const prompt = `Analyze this user input:\n\n${transcript}`;
 
     const messages = [
       { role: 'system', content: system },
@@ -87,7 +139,7 @@ User Transcript to analyze:
       model: 'gpt-4o',
       messages,
       temperature: 0.3,
-      max_tokens: 1500
+      max_tokens: 1600
     });
 
     let text = completion.choices?.[0]?.message?.content ?? completion.choices?.[0]?.text ?? '';
@@ -98,66 +150,95 @@ User Transcript to analyze:
   } catch (err) {
     console.error('[OpenAI Analysis Error]:', err?.message || err);
 
-    // Contextual evaluation fallback if OpenAI network issue occurs
-    const isHighStress = transcript.toLowerCase().includes('stress') || transcript.toLowerCase().includes('pressure') || transcript.toLowerCase().includes('overwhelm') || transcript.toLowerCase().includes('exam') || transcript.toLowerCase().includes('deadline');
-    const isPoorSleep = transcript.toLowerCase().includes('sleep') || transcript.toLowerCase().includes('tired') || transcript.toLowerCase().includes('fatigue') || transcript.toLowerCase().includes('exhaust');
+    const inputLower = (transcript || '').toLowerCase();
+    const isCritical =
+      inputLower.includes('want to die') ||
+      inputLower.includes("don't want to live") ||
+      inputLower.includes('kill myself') ||
+      inputLower.includes('nobody needs me') ||
+      inputLower.includes('life is meaningless') ||
+      inputLower.includes('want to disappear') ||
+      inputLower.includes('better without me');
 
-    const primaryEmotion = isHighStress ? 'Stress' : isPoorSleep ? 'Fatigue' : 'Reflective';
-    const secondaryEmotion = isHighStress ? 'Anxiety' : 'Calm';
-    const stressScore = isHighStress ? 82 : 45;
-    const anxietyScore = isHighStress ? 68 : 38;
-    const burnoutScore = isHighStress ? 65 : 35;
-    const burnoutRisk = isHighStress ? 'Medium' : 'Low';
-    const sleepQuality = isPoorSleep ? 'Poor' : 'Moderate';
-    const wellnessScore = isHighStress ? 58 : 72;
+    const isHighStress =
+      isCritical ||
+      inputLower.includes('stress') ||
+      inputLower.includes('pressure') ||
+      inputLower.includes('overwhelm') ||
+      inputLower.includes('anxious') ||
+      inputLower.includes('panic');
+
+    const isSleepIssue =
+      inputLower.includes('sleep') ||
+      inputLower.includes('insomnia') ||
+      inputLower.includes('tired') ||
+      inputLower.includes('exhaust');
+
+    const stressScore = isCritical ? 95 : isHighStress ? 82 : 45;
+    const wellnessScore = isCritical ? 15 : isHighStress ? 52 : 75;
+    const riskLevel = isCritical ? 'CRITICAL' : isHighStress ? 'HIGH' : 'LOW';
 
     return {
-      primaryEmotion,
-      secondaryEmotion,
-      stressScore,
-      anxietyScore,
-      burnoutScore,
-      burnoutRisk,
-      sleepQuality,
-      wellnessScore,
-      problemSummary: isHighStress
-        ? 'Feeling overwhelmed by intense workload pressure and disrupted rest.'
-        : 'Navigating daily routines and managing cognitive energy levels.',
-      recommendation: isHighStress
-        ? 'Take a short break, practice breathing exercises, and consider speaking with a psychologist if these feelings persist.'
-        : 'Maintain regular mindfulness breaks and stay consistent with hydration and sleep.',
-      overcomePlan: [
-        'Take a 5-minute breathing break when stress spikes occur',
-        'Establish a consistent sleep schedule and digital wind-down routine',
-        'Engage in a 20-minute daily walk to lower cortisol levels'
-      ],
-      dailyJournal: transcript && transcript.length > 10
-        ? `Today you shared: "${transcript.substring(0, 140)}...". Acknowledging your emotional state is a vital step toward balance.`
-        : 'Today you mentioned feeling overwhelmed by academic pressure and poor sleep.',
-      keyThemes: [
-        'Cognitive load & stress management',
-        'Sleep consistency',
-        'Daily energy balance'
-      ],
-      positiveNote: 'You reached out and reflected on your feelings today, which is an important step.',
-      suggestedActions: [
-        'Sleep before 11 PM',
-        '10-minute breathing exercise',
-        '20-minute walk'
-      ],
-      wellnessSummary: 'Regular self-reflection and proactive stress management will help restore energy and emotional balance.',
-      wellnessPlan: {
-        recommendations: [
-          'Sleep before 11 PM',
-          '10-minute breathing exercise',
-          '20-minute walk'
-        ]
+      analysis: {
+        stressLevel: {
+          score: stressScore,
+          label: stressScore > 75 ? 'High Stress' : stressScore > 45 ? 'Moderate Stress' : 'Balanced'
+        },
+        wellnessScore,
+        burnoutRisk: isCritical ? 'High' : isHighStress ? 'Medium' : 'Low',
+        sleepQuality: isSleepIssue ? 'Poor' : 'Unknown',
+        anxietyLevel: isCritical ? 'High' : isHighStress ? 'Elevated' : 'Mild',
+        depressionIndicator: isCritical ? 'High' : isHighStress ? 'Moderate' : 'Low',
+        emotionalStability: isCritical ? 'Unstable' : isHighStress ? 'Fluctuating' : 'Stable',
+        riskLevel
       },
-      psychologistRecommendation: 'Consider speaking with a licensed psychologist if high stress or anxiety persists.',
-      crisisDetection: false,
-      disclaimer: 'This assessment is AI-generated and should not be considered medical advice.'
+      emotionDetection: {
+        primary: isCritical ? 'Hopelessness' : isHighStress ? 'Stress' : 'Reflective',
+        secondary: isCritical ? 'Severe Distress' : isHighStress ? 'Anxiety' : 'Calm',
+        confidence: 90
+      },
+      summary: {
+        coreChallenge: isCritical
+          ? 'Acute emotional crisis and intense feelings of distress.'
+          : isHighStress
+          ? 'Navigating acute workload pressure and cognitive fatigue.'
+          : 'Reflecting on daily routines and personal thoughts.',
+        positiveStrengths: 'Willingness to articulate feelings and engage in daily reflection.',
+        clinicalSummary: isCritical
+          ? 'The user is experiencing significant emotional distress requiring urgent support.'
+          : 'The user shows signs of manageable stress and can benefit from structured self-care.'
+      },
+      recommendations: {
+        aiRecommendation: isCritical
+          ? 'Please connect with a trusted person, counselor, or contact a crisis support hotline immediately for supportive guidance.'
+          : 'Incorporate 5-minute breathing pauses and maintain a structured boundary between work and rest.',
+        recoveryPlan: isCritical
+          ? [
+              'Reach out directly to a trusted loved one or counselor today',
+              'Contact emergency wellness support or a crisis helpline',
+              'Take slow, grounding deep breaths in a quiet, safe space'
+            ]
+          : [
+              'Practice 10-minute diaphragmatic breathing during peak focus hours',
+              'Set a digital curfew 45 minutes prior to sleep',
+              'Engage in a 20-minute restorative walk'
+            ]
+      },
+      journal: {
+        title: isCritical ? 'Crisis Support Reflection' : `Daily Wellness Check-in`,
+        reflection: transcript && transcript.length > 5
+          ? `Today you shared: "${transcript.substring(0, 150)}..."`
+          : 'You took time to check in with your thoughts today.',
+        positiveNote: isCritical
+          ? 'Your feelings are valid, and reaching out is the first step toward getting the care you deserve.'
+          : 'Taking time to pause and reflect on your emotions is an important foundation for balance.',
+        keyThemes: isCritical
+          ? ['Emotional pain', 'Need for support', 'Self-compassion']
+          : ['Daily stress management', 'Rest & recovery', 'Mindfulness'],
+        suggestedActions: isCritical
+          ? ['Reach out to a close friend or counselor', 'Contact a 24/7 crisis resource', 'Stay in a safe, supportive environment']
+          : ['Sleep before 11 PM', '10-minute breathing exercise', '20-minute outdoor walk']
+      }
     };
   }
 }
-
-

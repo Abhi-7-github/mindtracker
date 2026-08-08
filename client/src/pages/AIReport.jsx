@@ -83,40 +83,41 @@ export const AIReport = () => {
     );
   }
 
-  // Resolved dynamic values with rich defaults
-  const primaryEmotion = analysis?.primaryEmotion || 'Stress';
-  const secondaryEmotion = analysis?.secondaryEmotion || 'Anxiety';
-  const stressLevel = analysis?.stressScore ?? 82;
-  const sleepQuality = analysis?.sleepQuality || 'Poor';
-  const burnoutRisk = analysis?.burnoutRisk || 'Medium';
-  const recommendation =
-    analysis?.recommendation ||
-    'Take a short break, practice breathing exercises, and consider speaking with a psychologist if these feelings persist.';
-  
-  const dailyJournalText =
-    analysis?.dailyJournal || 'Today you mentioned feeling overwhelmed by academic pressure and poor sleep.';
+  // Dynamic extraction supporting both nested and flat schemas
+  const stressObj = analysis?.analysis?.stressLevel || {};
+  const stressLevel = typeof stressObj === 'object' && stressObj.score !== undefined
+    ? stressObj.score
+    : (analysis?.stressScore ?? 0);
+  const stressLabel = stressObj?.label || (stressLevel > 75 ? 'High Stress' : stressLevel > 45 ? 'Moderate Stress' : 'Balanced');
 
-  const keyThemes =
-    analysis?.keyThemes && analysis.keyThemes.length > 0
-      ? analysis.keyThemes
-      : ['Exam stress', 'Worry about the future', 'Fatigue'];
+  const wellnessScore = analysis?.analysis?.wellnessScore ?? analysis?.wellnessScore ?? 0;
+  const burnoutRisk = analysis?.analysis?.burnoutRisk || analysis?.burnoutRisk || 'Unknown';
+  const sleepQuality = analysis?.analysis?.sleepQuality || analysis?.sleepQuality || 'Unknown';
+  const anxietyLevel = analysis?.analysis?.anxietyLevel || (analysis?.anxietyScore !== undefined ? `${analysis.anxietyScore}%` : 'Unknown');
+  const depressionIndicator = analysis?.analysis?.depressionIndicator || 'Unknown';
+  const emotionalStability = analysis?.analysis?.emotionalStability || 'Unknown';
+  const riskLevel = analysis?.analysis?.riskLevel || (analysis?.crisisDetection ? 'CRITICAL' : 'MODERATE');
 
-  const positiveNote =
-    analysis?.positiveNote || 'You reached out and reflected on your feelings today, which is an important step.';
+  const primaryEmotion = analysis?.emotionDetection?.primary || analysis?.primaryEmotion || 'Unknown';
+  const secondaryEmotion = analysis?.emotionDetection?.secondary || analysis?.secondaryEmotion || 'Unknown';
+  const emotionConfidence = analysis?.emotionDetection?.confidence || 88;
 
-  const suggestedActions =
-    analysis?.suggestedActions && analysis.suggestedActions.length > 0
-      ? analysis.suggestedActions
-      : ['Sleep before 11 PM', '10-minute breathing exercise', '20-minute walk'];
+  const coreChallenge = analysis?.summary?.coreChallenge || analysis?.problemSummary || 'Daily emotional and cognitive balance.';
+  const positiveStrengths = analysis?.summary?.positiveStrengths || 'Proactive engagement in self-reflection and mental awareness.';
+  const clinicalSummary = analysis?.summary?.clinicalSummary || analysis?.wellnessSummary || '';
 
-  const overcomePlan =
-    analysis?.overcomePlan && analysis.overcomePlan.length > 0
-      ? analysis.overcomePlan
-      : [
-          'Take a short break to reset your focus during high-pressure moments',
-          'Practice 10-minute diaphragmatic breathing to regulate stress hormones',
-          'Maintain a consistent sleep schedule before 11 PM to recover cognitive energy',
-        ];
+  const aiRecommendation = analysis?.recommendations?.aiRecommendation || analysis?.recommendation || 'Engage in regular self-care pauses and mind-body balance activities.';
+  const recoveryPlan = (analysis?.recommendations?.recoveryPlan && analysis.recommendations.recoveryPlan.length > 0)
+    ? analysis.recommendations.recoveryPlan
+    : (analysis?.overcomePlan && analysis.overcomePlan.length > 0 ? analysis.overcomePlan : (analysis?.wellnessPlan?.recommendations || []));
+
+  const journalData = analysis?.journal || {};
+  const journalTitle = journalData.title || `AI Journal — ${primaryEmotion} Reflection`;
+  const dailyJournalText = journalData.reflection || analysis?.dailyJournal || transcript || 'Your voice check-in has been analyzed and recorded.';
+  const positiveNote = journalData.positiveNote || analysis?.positiveNote || 'Taking time to pause and reflect is an important foundation for emotional well-being.';
+  const keyThemes = (journalData.keyThemes && journalData.keyThemes.length > 0) ? journalData.keyThemes : (analysis?.keyThemes || []);
+  const suggestedActions = (journalData.suggestedActions && journalData.suggestedActions.length > 0) ? journalData.suggestedActions : (analysis?.suggestedActions || recoveryPlan);
+
 
   return (
     <DashboardLayout>
@@ -159,10 +160,10 @@ export const AIReport = () => {
             <div className="w-full bg-red-200 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-red-600 h-full rounded-full transition-all duration-500"
-                style={{ width: `${stressLevel}%` }}
+                style={{ width: `${Math.min(100, Math.max(5, stressLevel))}%` }}
               />
             </div>
-            <span className="text-[11px] font-bold text-red-800">High Stress Indicator</span>
+            <span className="text-[11px] font-bold text-red-800">{stressLabel}</span>
           </Card>
 
           {/* Sleep Quality */}
@@ -176,9 +177,9 @@ export const AIReport = () => {
                 {sleepQuality}
               </span>
             </div>
-            <p className="text-[11px] font-semibold text-indigo-800">
-              Disrupted rest cycles reported; restorative sleep advised.
-            </p>
+            <span className="text-[11px] font-bold text-indigo-800">
+              {sleepQuality === 'Poor' ? 'Disrupted rest cycles detected' : sleepQuality === 'Good' ? 'Healthy restorative rest' : 'Rest analysis recorded'}
+            </span>
           </Card>
 
           {/* Burnout Risk */}
@@ -188,17 +189,41 @@ export const AIReport = () => {
                 <Flame className="w-3.5 h-3.5 text-amber-600" />
                 <span>Burnout Risk</span>
               </span>
-              <span className="px-2 py-0.5 rounded bg-amber-500 text-black text-[11px] font-black uppercase">
+              <span className={`px-2 py-0.5 rounded text-[11px] font-black uppercase ${
+                burnoutRisk === 'High' || burnoutRisk === 'Critical' ? 'bg-red-600 text-white' : 'bg-amber-500 text-black'
+              }`}>
                 {burnoutRisk}
               </span>
             </div>
-            <p className="text-[11px] font-semibold text-amber-800">
-              Workload and cognitive load require pacing pauses.
-            </p>
+            <span className="text-[11px] font-bold text-amber-800">Cognitive & workload fatigue index</span>
           </Card>
 
           {/* Overall Wellness */}
-          <ScoreGauge title="Wellness Score" score={analysis?.wellnessScore || 58} />
+          <ScoreGauge title="Wellness Score" score={wellnessScore} />
+        </div>
+
+        {/* Psychological Diagnostics Overview */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="p-3.5 bg-white rounded-xl polo-border flex flex-col justify-between">
+            <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">Risk Assessment</span>
+            <span className={`text-xs font-black uppercase mt-1 px-2 py-0.5 rounded-full inline-block w-fit ${
+              riskLevel === 'CRITICAL' ? 'bg-red-600 text-white' : riskLevel === 'HIGH' ? 'bg-orange-500 text-white' : riskLevel === 'MODERATE' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'
+            }`}>
+              {riskLevel}
+            </span>
+          </div>
+          <div className="p-3.5 bg-white rounded-xl polo-border flex flex-col justify-between">
+            <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">Anxiety Level</span>
+            <span className="text-xs font-black text-neutral-900 mt-1">{anxietyLevel}</span>
+          </div>
+          <div className="p-3.5 bg-white rounded-xl polo-border flex flex-col justify-between">
+            <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">Depression Indicator</span>
+            <span className="text-xs font-black text-neutral-900 mt-1">{depressionIndicator}</span>
+          </div>
+          <div className="p-3.5 bg-white rounded-xl polo-border flex flex-col justify-between">
+            <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">Emotional Stability</span>
+            <span className="text-xs font-black text-neutral-900 mt-1">{emotionalStability}</span>
+          </div>
         </div>
 
         {/* Primary & Secondary Emotions Banner */}
@@ -223,62 +248,67 @@ export const AIReport = () => {
             </div>
           </div>
           <div className="text-xs text-neutral-300 font-medium max-w-sm text-center md:text-right">
-            Voice pitch, pacing, and lexical tone analyzed with clinical NLP models.
+            Voice pitch, tone, and lexical phrasing evaluated with neural mental health models.
           </div>
         </Card>
 
-        {/* Recommendation & How to Overcome Plan */}
+        {/* Core Challenge & Strengths */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4 space-y-1.5 bg-white polo-border">
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#9F1239]">Core Challenge Identified</span>
+            <p className="text-xs font-bold text-neutral-900 leading-relaxed">{coreChallenge}</p>
+          </Card>
+          <Card className="p-4 space-y-1.5 bg-emerald-50/40 border-emerald-200">
+            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800">Identified Strengths & Resilience</span>
+            <p className="text-xs font-bold text-emerald-900 leading-relaxed">{positiveStrengths}</p>
+          </Card>
+        </div>
+
+        {/* Recommendation & Personalized Recovery Plan */}
         <Card className="p-6 space-y-4 border-2 border-[#9F1239]/40 bg-white polo-shadow">
           <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
             <div className="flex items-center space-x-2 text-[#9F1239]">
               <Lightbulb className="w-5 h-5" />
               <h3 className="text-sm font-black uppercase tracking-wider">
-                AI Suggestion Plan & Overcoming Strategy
+                Personalized AI Recommendation & Recovery Plan
               </h3>
             </div>
             <span className="text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-red-100 text-[#9F1239]">
-              Tailored by AI
+              Tailored by POLO Engine
             </span>
           </div>
-
-          {/* Identified Concern from Voice */}
-          {analysis?.problemSummary && (
-            <div className="p-3.5 bg-neutral-100 rounded-xl border border-neutral-200 space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-wider text-neutral-500">
-                Identified Core Challenge:
-              </span>
-              <p className="text-xs font-bold text-neutral-900">{analysis.problemSummary}</p>
-            </div>
-          )}
           
           <div className="space-y-1.5">
             <span className="text-[10px] font-black uppercase tracking-wider text-[#9F1239]">
               Clinical AI Recommendation:
             </span>
             <div className="p-4 bg-red-50/70 rounded-xl border border-red-200 text-xs font-bold text-neutral-900 leading-relaxed">
-              {recommendation}
+              {aiRecommendation}
             </div>
           </div>
 
-          <div className="space-y-2 pt-2">
-            <h4 className="text-xs font-black uppercase text-neutral-800">
-              Personalized Plan to Overcome This Problem:
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {overcomePlan.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 bg-neutral-50 rounded-xl polo-border flex items-start space-x-2.5 text-xs font-medium text-neutral-800"
-                >
-                  <span className="w-5 h-5 rounded-full bg-[#9F1239] text-white flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">
-                    {idx + 1}
-                  </span>
-                  <span className="leading-snug">{step}</span>
-                </div>
-              ))}
+          {recoveryPlan && recoveryPlan.length > 0 && (
+            <div className="space-y-2 pt-2">
+              <h4 className="text-xs font-black uppercase text-neutral-800">
+                Actionable Recovery Steps:
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {recoveryPlan.map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 bg-neutral-50 rounded-xl polo-border flex items-start space-x-2.5 text-xs font-medium text-neutral-800"
+                  >
+                    <span className="w-5 h-5 rounded-full bg-[#9F1239] text-white flex items-center justify-center text-[10px] font-black flex-shrink-0 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <span className="leading-snug">{step}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </Card>
+
 
 
         {/* AI-Generated Journal Section */}
